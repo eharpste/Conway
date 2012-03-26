@@ -110,6 +110,7 @@ public class Conway extends Game {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		for(Mesh m : gol.toMeshes(-1)) {
 			m.render(GL10.GL_TRIANGLE_STRIP,0,4);
+			m.dispose();
 		}
 	//	squareMesh.render(GL10.GL_TRIANGLE_STRIP,0,4);
 		//nearSquare.render(GL10.GL_TRIANGLE_STRIP,0,4);

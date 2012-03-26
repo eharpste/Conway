@@ -162,7 +162,7 @@ public class Board {
 					Mesh m = new Mesh(true,4,4,
 						new VertexAttribute(Usage.Position,3,"a_position"),
 						new VertexAttribute(Usage.ColorPacked, 4, "a_color"));
-				System.out.println("l="+l+" r="+r+" t="+t+" b="+b);
+				//System.out.println("l="+l+" r="+r+" t="+t+" b="+b);
 					m.setVertices(new float[] {l, b, depth, getCell(j,i).getColor().toFloatBits(),
 											   r, b, depth, getCell(j,i).getColor().toFloatBits(),
 											   l, t, depth, getCell(j,i).getColor().toFloatBits(),
