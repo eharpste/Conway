@@ -149,8 +149,9 @@ public class Board {
 	 */
 	public ArrayList<Mesh> toMeshes(float depth) {
 		ArrayList<Mesh> ret = new ArrayList<Mesh>(height*width);
+		float squareSize = 2f/(float)width;
 		float l = -1;
-		float r = 2f/(float)width-1;
+		float r = squareSize-1;
 		float t = 2f/(float)height-1;
 		float b = -1;
 		for (int i = 0; i < height; i++) {
@@ -168,10 +169,11 @@ public class Board {
 				m.setIndices(new short[] {0,1,2,3});
 				ret.add(m);
 				l = r;
-				r += ((float)2)/(float)width;
+				r += squareSize;
 			}
 			b = t;
-			t += ((float)2)/(float)height;
+			t+=squareSize;
+			//t += ((float)2)/(float)height;
 		}
 		return ret;
 	}
