@@ -33,10 +33,10 @@ public class Conway extends Game {
 	public void create() {
 		gol = new Board(1000,40);
 		
-		meshes = gol.toMeshes(-1);
-		System.out.println("meshes.length = "+meshes.size());
+		//meshes = gol.toMeshes(-1);
+		//System.out.println("meshes.length = "+meshes.size());
 		System.out.println("Board height: "+gol.getHeight() + "Board width: "+gol.getWidth());
-		System.out.println("Board:\n"+gol.toString());
+		//System.out.println("Board:\n"+gol.toString());
 		/*
 		if(squareMesh == null) {
 			squareMesh = new Mesh(true,4,4,
@@ -99,7 +99,7 @@ public class Conway extends Game {
 		//total ++;
 		//if(total > 1000) {
 			gol.update();
-			meshes = gol.updateMeshes(meshes);
+			//meshes = gol.updateMeshes(meshes);
 			//total = 0;
 	//	}
 		
@@ -108,7 +108,7 @@ public class Conway extends Game {
 		//spriteBatch.setProjectionMatrix(camera.combined);
 		
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		for(Mesh m : meshes) {
+		for(Mesh m : gol.toMeshes(-1)) {
 			m.render(GL10.GL_TRIANGLE_STRIP,0,4);
 		}
 	//	squareMesh.render(GL10.GL_TRIANGLE_STRIP,0,4);
