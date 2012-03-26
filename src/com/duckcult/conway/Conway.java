@@ -33,7 +33,7 @@ public class Conway extends Game {
 	public void create() {
 		gol = new Board(1000,40);
 		
-		meshes = gol.toMeshes(-5);
+		meshes = gol.toMeshes(-1);
 		System.out.println("meshes.length = "+meshes.size());
 		System.out.println("Board height: "+gol.getHeight() + "Board width: "+gol.getWidth());
 		System.out.println("Board:\n"+gol.toString());
