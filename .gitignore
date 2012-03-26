@@ -1,0 +1,7 @@
+# Files for the Android Game to Ignore #
+########################################
+*.class
+*~
+*.apk
+*.dex
+game/bin/
