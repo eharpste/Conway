@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.duckcult.conway.gol.Board;
+import com.duckcult.conway.gol.CellProfile;
 import com.duckcult.conway.screens.ConwayScreen;
 
 public class Conway extends Game {
@@ -25,14 +26,14 @@ public class Conway extends Game {
 	private Camera camera;
 	//private Mesh nearSquare; 
 	
-	private ArrayList<Mesh> meshes;
 	
 	private Board gol;
+	private Board background;
 	
 	@Override
 	public void create() {
-		gol = new Board(1000,40);
-		
+		gol = new Board(400,40);
+		background= new Board(600,120,CellProfile.ENEMY);
 		//meshes = gol.toMeshes(-1);
 		//System.out.println("meshes.length = "+meshes.size());
 		System.out.println("Board height: "+gol.getHeight() + "Board width: "+gol.getWidth());
@@ -82,23 +83,30 @@ public class Conway extends Game {
 	}
 
 	
-	private int total = 0;
+	private int t1 = 0;
+	private int t2 = 0;
 	private float movementIncrement = .0006f;
+	private float move = .04f;
 	
 	@Override
 	public void render() {
-		/*total +=1;
-		if(total > 500){
+		/*t1 ++;
+		if(t1 > 500){
 			movementIncrement = -movementIncrement;
-			total = -200;
-		}
+			t1 = -200;
+		}*/
 		
-		camera.rotate(movementIncrement *20, 0, 1, 0);
-		camera.translate(movementIncrement, 0, movementIncrement);
-		*/
+		//camera.rotate(movementIncrement *20, 0, 1, 0);
+		camera.translate(0, move, 0);
+		
 		//total ++;
 		//if(total > 1000) {
+		t2++;
+		if(t2 > 50) {
 			gol.update();
+			background.update();
+			t2=0;
+		}
 			//meshes = gol.updateMeshes(meshes);
 			//total = 0;
 	//	}
@@ -108,10 +116,15 @@ public class Conway extends Game {
 		//spriteBatch.setProjectionMatrix(camera.combined);
 		
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		for(Mesh m :background.toMeshes(-1.5f)) {
+			m.render(GL10.GL_TRIANGLE_STRIP,0,4);
+			m.dispose();
+		}
 		for(Mesh m : gol.toMeshes(-1)) {
 			m.render(GL10.GL_TRIANGLE_STRIP,0,4);
 			m.dispose();
 		}
+		
 	//	squareMesh.render(GL10.GL_TRIANGLE_STRIP,0,4);
 		//nearSquare.render(GL10.GL_TRIANGLE_STRIP,0,4);
 	/*	spriteBatch.begin();

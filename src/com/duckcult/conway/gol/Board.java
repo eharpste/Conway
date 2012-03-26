@@ -42,19 +42,23 @@ public class Board {
 	}
 	
 	public Board(int height, int width) {
-		this(height, width, 0);	
+		this(height, width, 0, CellProfile.NORMAL);	
 	}
 	
-	private Board(int height, int width, int flag) {
-		initBoard(height,width,flag);
+	public Board(int height, int width, CellProfile profile) {
+		this(height, width, 0, profile);
+	}
+	
+	private Board(int height, int width, int flag, CellProfile profile) {
+		initBoard(height,width,flag,profile);
 	}
 	
 	public static Board emptyBoard(int height, int width) {
-		return new Board(height,width,1);
+		return new Board(height,width,1,CellProfile.NORMAL);
 	}
 	
-	public static Board allLive(int height, int width) {
-		return new Board(height,width,2);
+	public static Board allLive(int height, int width, CellProfile profile) {
+		return new Board(height,width,2,profile);
 	}
 
 //simple mutator methods	
@@ -64,41 +68,41 @@ public class Board {
 	public int getHeight(){return height;}
 	public Cell getCell(int x, int y){return grid.get(y).get(x);}
 	
-	private void initBoard(int height, int width, int flag) {
+	private void initBoard(int height, int width, int flag, CellProfile profile) {
 		grid = new ArrayList<ArrayList<Cell>>(height);
 		for (int i=0; i<height;i++){
 			switch(flag) {
 			case 1:
-				grid.add(emptyRow(width));
+				grid.add(emptyRow(width,profile));
 			case 2:
-				grid.add(fullRow(width));
+				grid.add(fullRow(width,profile));
 			default:
-				grid.add(randomRow(width));	
+				grid.add(randomRow(width,profile));	
 			}
 		}
 		this.height = height;
 		this.width = width;
 	}
 		
-	private ArrayList<Cell> fullRow (int length) {
+	private ArrayList<Cell> fullRow (int length, CellProfile profile) {
 		ArrayList<Cell> temp = new ArrayList<Cell>(length);
 		for (int i=0;i<length;i++)
-			temp.add(new BasicCell(true));
+			temp.add(new BasicCell(true, profile));
 		return temp;
 	}
 	
-	private ArrayList<Cell> randomRow(int length) {
+	private ArrayList<Cell> randomRow(int length, CellProfile profile) {
 		ArrayList<Cell> temp = new ArrayList<Cell>(length);
 		for (int i=0; i<length;i++){
-			temp.add(new BasicCell(Math.random()>PERCENT_ALIVE));
+			temp.add(new BasicCell(Math.random()>PERCENT_ALIVE, profile));
 		}
 		return temp;
 	}
 	
-	private ArrayList<Cell> emptyRow(int length) {
+	private ArrayList<Cell> emptyRow(int length, CellProfile profile) {
 		ArrayList<Cell> temp = new ArrayList<Cell>(length);
 		for (int i=0;i<length;i++)
-			temp.add(new BasicCell());
+			temp.add(new BasicCell(false, profile));
 		return temp;
 	}
  	
@@ -106,7 +110,7 @@ public class Board {
 		for (int i = 0; i < grid.size()-1; i++) {
 			grid.set(i, grid.get(i+1));
 		}
-		grid.set(grid.size()-1, randomRow(width));
+		grid.set(grid.size()-1, randomRow(width,CellProfile.NORMAL));
 	}
 	
 	public void update() {

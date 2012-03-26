@@ -22,7 +22,8 @@ public class CellProfile {
 	public static final int BACKGROUND_TYPE = 5;
 	
 	public static final CellProfile NORMAL 		= new CellProfile(Color.GREEN,Color.BLACK,0);
-	public static final CellProfile ENEMY 		= new CellProfile(new Color(1,.5f,.25f,1),Color.BLACK,4);
+	public static final CellProfile ENEMY 		= new CellProfile(Color.RED,Color.BLACK,4);
+	//new Color(1,.5f,.25f,1)
 	public static final CellProfile BACKGROUND 	= new CellProfile(new Color(.6f,.6f,.6f,1),Color.BLACK,5);
 	public static final CellProfile SUPER 		= new CellProfile(Color.BLUE,Color.BLACK,3,2,3,3,1);
 	public static final CellProfile CROWD 		= new CellProfile(new Color(1,0,1,1),Color.BLACK,3,2,6,1,2);
