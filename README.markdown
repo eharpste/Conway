@@ -1,4 +1,4 @@
-The previous warning for Macs should be fixed at this point.
+Warning: Apparently it still doesn't play nice with Macs
 
 In this doc TODO is for features to be added and Issues is for things that need to be fixed.
 
