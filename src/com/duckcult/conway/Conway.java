@@ -32,8 +32,8 @@ public class Conway extends Game {
 	
 	@Override
 	public void create() {
-		gol = new Board(400,40);
-		background= new Board(600,120,CellProfile.ENEMY);
+		gol = new Board(400,21);
+		background= new Board(600,120,CellProfile.BACKGROUND);
 		//meshes = gol.toMeshes(-1);
 		//System.out.println("meshes.length = "+meshes.size());
 		System.out.println("Board height: "+gol.getHeight() + "Board width: "+gol.getWidth());
@@ -82,11 +82,8 @@ public class Conway extends Game {
 	public void pause() {
 	}
 
-	
-	private int t1 = 0;
 	private int t2 = 0;
-	private float movementIncrement = .0006f;
-	private float move = .04f;
+	private float move = .05f;
 	
 	@Override
 	public void render() {
@@ -97,20 +94,21 @@ public class Conway extends Game {
 		}*/
 		
 		//camera.rotate(movementIncrement *20, 0, 1, 0);
-		camera.translate(0, move, 0);
+		
 		
 		//total ++;
 		//if(total > 1000) {
 		t2++;
-		if(t2 > 50) {
+		if(t2 == 5) {
 			gol.update();
+		}
+		
+		if(t2 == 10) {
 			background.update();
 			t2=0;
 		}
-			//meshes = gol.updateMeshes(meshes);
-			//total = 0;
-	//	}
 		
+		camera.translate(0, move, 0);
 		camera.update();
 		camera.apply(Gdx.gl10);
 		//spriteBatch.setProjectionMatrix(camera.combined);

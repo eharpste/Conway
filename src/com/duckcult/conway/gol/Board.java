@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 
 public class Board {
-	public static final double PERCENT_ALIVE = 0.5;
+	public static final double PERCENT_DEAD = 0.7;
 	ArrayList<ArrayList<Cell>> grid;
 	
 	private int height;
@@ -94,7 +94,7 @@ public class Board {
 	private ArrayList<Cell> randomRow(int length, CellProfile profile) {
 		ArrayList<Cell> temp = new ArrayList<Cell>(length);
 		for (int i=0; i<length;i++){
-			temp.add(new BasicCell(Math.random()>PERCENT_ALIVE, profile));
+			temp.add(new BasicCell(Math.random()>PERCENT_DEAD, profile));
 		}
 		return temp;
 	}
