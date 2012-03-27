@@ -83,8 +83,9 @@ public class Conway extends Game {
 	}
 
 	private int t2 = 0;
-	private float move = .05f;
+	private float move = .5f;
 	
+	private float time = 0f;
 	@Override
 	public void render() {
 		/*t1 ++;
@@ -98,17 +99,15 @@ public class Conway extends Game {
 		
 		//total ++;
 		//if(total > 1000) {
-		t2++;
-		if(t2 == 5) {
+		time+=Gdx.graphics.getDeltaTime();
+		//Gdx.app.log("tag", time+"");
+		if(time > 1f) {
 			gol.update();
-		}
-		
-		if(t2 == 10) {
 			background.update();
-			t2=0;
+			time = 0f;
 		}
 		
-		camera.translate(0, move, 0);
+		camera.translate(0, Gdx.graphics.getDeltaTime()*move, 0);
 		camera.update();
 		camera.apply(Gdx.gl10);
 		//spriteBatch.setProjectionMatrix(camera.combined);
