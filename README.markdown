@@ -10,5 +10,5 @@ In this doc TODO is for features to be added and Issues is for things that need 
 * tie the board updates and camera moves to time deltas. 
 
 #Issues
-*Figure out why green cells show up in other layers
-*Figure out why the camera is jerky
+* Figure out why green cells show up in other layers
+* Figure out why the camera is jerky
