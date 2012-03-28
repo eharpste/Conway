@@ -5,14 +5,22 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 
+/**
+ * The Board class runs all of the Game of Life code.
+ * It provides various constructors and accessor methods for getting at different subsets of the grid.
+ * @author eharpste
+ *
+ */
 public class Board {
+	/**
+	 * The percentage used to determine how many cells to make dead when using randomized boards.
+	 */
 	public static final double PERCENT_DEAD = 0.7;
-	ArrayList<ArrayList<Cell>> grid;
+	private ArrayList<ArrayList<Cell>> grid;
 	
 	private int height;
 	private int width;
@@ -41,33 +49,92 @@ public class Board {
 		width = grid.get(0).size();
 	}
 	
+	/**
+	 * Creates a new Board of the specified dimensions populated with NORMAL Cells.
+	 * The proportion of live to dead will be defined by the PERCENT_DEAD constant.
+	 * @param height
+	 * @param width
+	 */
 	public Board(int height, int width) {
 		this(height, width, 0, CellProfile.NORMAL);	
 	}
 	
+	/**
+	 * Creates a new Board of the specified dimensions populated with the specified type of Cell.
+	 * The proportion of live to dead will be defined by the PERCENT_DEAD constant.
+	 * @param height
+	 * @param width
+	 * @param profile
+	 */
 	public Board(int height, int width, CellProfile profile) {
 		this(height, width, 0, profile);
 	}
 	
+	/**
+	 * Creates a new Board of the specified dimensions populate with the type of Cell.
+	 * The flag integer determines whether the board is populated, empty, or full.
+	 * @param height
+	 * @param width
+	 * @param flag
+	 * @param profile
+	 */
 	private Board(int height, int width, int flag, CellProfile profile) {
 		initBoard(height,width,flag,profile);
 	}
 	
+	/**
+	 * Returns a Board of the specified dimensions populated entirely with dead NORMAL cells.
+	 * @param height
+	 * @param width
+	 * @return
+	 */
 	public static Board emptyBoard(int height, int width) {
 		return new Board(height,width,1,CellProfile.NORMAL);
 	}
 	
+	/**
+	 * Returns a Board of the specified dimensions populated entirely with live NORMAL cells. 
+	 * @param height
+	 * @param width
+	 * @param profile
+	 * @return
+	 */
 	public static Board allLive(int height, int width, CellProfile profile) {
 		return new Board(height,width,2,profile);
 	}
 
 //simple mutator methods	
 	//private void setWrap(int type){wrap = type;}
-//simple accessor methods
+	
+	/**
+	 * Returns the width of the Board
+	 * @return
+	 */
 	public int getWidth(){return width;}
+	/**
+	 * Returns the height of the Board
+	 * @return
+	 */
 	public int getHeight(){return height;}
+	/**
+	 * Returns the Cell at (x,y).
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public Cell getCell(int x, int y){return grid.get(y).get(x);}
 	
+	/**
+	 * Initialized the Board with the the given dimensions and CellProfile.
+	 * The flag int defines the living proportion.
+	 * flag == 0 PERCENT_DEAD percent of dead cells
+	 * flag == 1 full board of 100% dead cells
+	 * flag == 2 full board of 100% live cells
+	 * @param height
+	 * @param width
+	 * @param flag
+	 * @param profile
+	 */
 	private void initBoard(int height, int width, int flag, CellProfile profile) {
 		grid = new ArrayList<ArrayList<Cell>>(height);
 		for (int i=0; i<height;i++){
@@ -83,7 +150,13 @@ public class Board {
 		this.height = height;
 		this.width = width;
 	}
-		
+	
+	/**
+	 * Generates a new row of size length populated with all live profile type cells.
+	 * @param length
+	 * @param profile
+	 * @return
+	 */
 	private ArrayList<Cell> fullRow (int length, CellProfile profile) {
 		ArrayList<Cell> temp = new ArrayList<Cell>(length);
 		for (int i=0;i<length;i++)
@@ -91,6 +164,12 @@ public class Board {
 		return temp;
 	}
 	
+	/**
+	 * Generates a new row of size length populated with PERCENT_DEAD profile type cells. 
+	 * @param length
+	 * @param profile
+	 * @return
+	 */
 	private ArrayList<Cell> randomRow(int length, CellProfile profile) {
 		ArrayList<Cell> temp = new ArrayList<Cell>(length);
 		for (int i=0; i<length;i++){
@@ -99,6 +178,12 @@ public class Board {
 		return temp;
 	}
 	
+	/**
+	 * Generates a new row of size length populated with all dead profile type cells.
+	 * @param length
+	 * @param profile
+	 * @return
+	 */
 	private ArrayList<Cell> emptyRow(int length, CellProfile profile) {
 		ArrayList<Cell> temp = new ArrayList<Cell>(length);
 		for (int i=0;i<length;i++)
@@ -106,6 +191,9 @@ public class Board {
 		return temp;
 	}
  	
+	/**
+	 * Moves every row down one grid point and generates a new random row at the top of the board.
+	 */
 	public void advanceBoard() {
 		for (int i = 0; i < grid.size()-1; i++) {
 			grid.set(i, grid.get(i+1));
@@ -113,6 +201,9 @@ public class Board {
 		grid.set(grid.size()-1, randomRow(width,CellProfile.NORMAL));
 	}
 	
+	/**
+	 * Runs a single tick of the game  of life through the entire grid.
+	 */
 	public void update() {
 		for(int i = 0; i < height; i++) {
 			ArrayList<Cell> temp = grid.get(i);
@@ -146,8 +237,8 @@ public class Board {
 	}
 	
 	/**
-	 * Returns a 1D arrayList of meshes of the board for rendering
-	 * the arraylist is ordered left then up.
+	 * Returns a 1D arrayList of meshes of the board for rendering.
+	 * The returned ArrayList only contains Meshes for live cells and is ordered left to right and up.
 	 * @param depth
 	 * @return
 	 */
@@ -184,35 +275,22 @@ public class Board {
 		return ret;
 	}
 	
-	public ArrayList<Mesh> updateMeshes(ArrayList<Mesh> current) {
-		int i = 0;
-		int j = 0;
-		float [] verts = new float[16];
-		for (Mesh m : current) {
-			m.getVertices(verts);
-			verts[3] = getCell(j,i).getColor().toFloatBits();
-			verts[7] = getCell(j,i).getColor().toFloatBits();
-			verts[11] = getCell(j,i).getColor().toFloatBits();
-			verts[15] = getCell(j,i).getColor().toFloatBits();
-			m.setVertices(verts);
-			if(j<width-1)
-				j++;
-			else {
-				j=0;
-				if(i<height-1)
-					i++;
-			}
-		}
-		return current;
-	}
 	
-	
-	//rotates a coordinate on the center of its axis, used in klien bottle
+	/**
+	 * rotates a coordinate bout it's axis. Used to be used in the Klien Bottle wrapping mode.  
+	 * @param coord
+	 * @param max
+	 * @return
+	 */
 		private int rotateOnAxis (int coord, int max) {
 			return (max-1)-coord;
 		}
 
-	//basic toString method, doesn't actually work since objectification the toStrings for each cell would be wrong
+	/**
+	 * Returns a String representation of the board.
+	 * This might not work, I have not checked it since converting the Board over to being based on Objects instead of booleans.
+	 * It should probably output the same string representation that the File reading constructor requires.
+	 */
 		public String toString(){
 			String ret = "";
 			for (int i = 0; i < grid.size(); i++){
@@ -225,7 +303,10 @@ public class Board {
 			return ret;
 		}
 		
-	//a method that checks to see if everything is dead and returns true if so
+	/**
+	 * Checks if all cells on the board are dead, if so it returns true.
+	 * @return
+	 */
 		public boolean extinct(){
 			for (int i = 0; i < grid.size(); i++){
 				ArrayList<Cell> temp = grid.get(i);
@@ -237,6 +318,14 @@ public class Board {
 			return true;
 		}
 		
+		/**
+		 * Inserts a grid of cells beginning at the specified x,y coordinates.
+		 * If an element in the provided grid is null then the Cell at its corresponding coordinates will be left alone.
+		 * NOTE: [0][0] is the bottom left corner of the grid [0][length] is the bottom right.  
+		 * @param x
+		 * @param y
+		 * @param cells
+		 */
 		public void setCells(int x, int y, Cell[][] cells) {
 			for (int i = 0; i < cells.length; i++) {
 				for (int j = 0; j < cells[0].length; j++) {
@@ -249,6 +338,15 @@ public class Board {
 			}
 		}
 		
+		/**
+		 * Checks a pattern of cells at position (x,y) and returns true if any of them are alive.
+		 * It essentially functions like a regional call to extinct() except returns true if a Cell if alive.
+		 * NOTE: [0][0] is the bottom left corner of the grid [0][length] is the bottom right.
+		 * @param x
+		 * @param y
+		 * @param cells
+		 * @return
+		 */
 		public boolean checkCells(int x, int y, Cell[][]cells) {
 			for (int i = 0; i < cells.length; i++) {
 				for (int j = 0; j < cells[0].length; j++) {
@@ -261,6 +359,15 @@ public class Board {
 			return false;
 		}
 		
+		/**
+		 * Returns a subset of the main grid starting at (x,y) with the provided height and width.
+		 * Currently there is no special checking for index out of bounds exceptions.
+		 * @param x
+		 * @param y
+		 * @param width
+		 * @param height
+		 * @return
+		 */
 		public ArrayList<ArrayList<Cell>> getSubgrid(int x, int y, int width, int height) {
 			ArrayList<ArrayList<Cell>> ret = new ArrayList<ArrayList<Cell>> (height);
 			for (int i = y; i < height; i++) {
@@ -269,7 +376,9 @@ public class Board {
 			return ret;
 		}
 	
-	
+/*-----------------------------------------------------------------------------------------------------------------//
+		Everything bellow this line is fragments of the former implementation of the game of life code.
+//-----------------------------------------------------------------------------------------------------------------*/
 //sets up the board for the closed box setting.
 	/*private void initBoardBox(int pRow, int pCol, int ratio) {
 		int temp;

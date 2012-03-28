@@ -19,6 +19,12 @@ import com.duckcult.conway.gol.Board;
 import com.duckcult.conway.gol.CellProfile;
 import com.duckcult.conway.screens.ConwayScreen;
 
+/**
+ * The main game logic.
+ * See documentation at: http://code.google.com/p/libgdx/ for how the Gdx library works.
+ * @author eharpste
+ *
+ */
 public class Conway extends Game {
 	//private Mesh squareMesh;
 	//private Texture texture;
