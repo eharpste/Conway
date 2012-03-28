@@ -1,6 +1,8 @@
 Warning: Apparently it still doesn't play nice with Macs
 
 In this doc TODO is for features to be added and Issues is for things that need to be fixed.
+This project uses the libgdx library found here: http://code.google.com/p/libgdx/
+Documentation for libgdx can be found here: http://libgdx.badlogicgames.com/nightlies/docs/api/
 
 #TODO
 * Add spaceship to game board
