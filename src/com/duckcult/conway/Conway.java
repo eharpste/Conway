@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.duckcult.conway.gol.Board;
 import com.duckcult.conway.gol.CellProfile;
+import com.duckcult.conway.gol.FastBoard;
 import com.duckcult.conway.screens.ConwayScreen;
 
 /**
@@ -33,13 +34,13 @@ public class Conway extends Game {
 	//private Mesh nearSquare; 
 	
 	
-	private Board gol;
-	private Board background;
+	private FastBoard gol;
+	private FastBoard background;
 	
 	@Override
 	public void create() {
-		gol = new Board(400,21);
-		background= new Board(600,120,CellProfile.BACKGROUND);
+		gol = new FastBoard(400,21);
+		background= new FastBoard(600,120,CellProfile.BACKGROUND);
 		//meshes = gol.toMeshes(-1);
 		//System.out.println("meshes.length = "+meshes.size());
 		System.out.println("Board height: "+gol.getHeight() + "Board width: "+gol.getWidth());
