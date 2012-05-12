@@ -23,47 +23,15 @@ public class FastBoard {
 		private static final int DEFAULT_FULL = 1;
 		private static final int DEFAULT_RANDOM = 2;
 		private static final double DEFAULT_PERCENT_DEAD = .5;
-		/**
-		 * Returns a Board of the specified dimensions populated entirely with live NORMAL cells. 
-		 * @param height
-		 * @param width
-		 * @param profile
-		 * @return
-		 */
-		public static FastBoard allLive(int height, int width, CellProfile profile) {
-			return new FastBoard(height,width,DEFAULT_FULL,profile,BUFFER_OFF,0.0,0f,null);
-		}
-		/**
-		 * Returns an initially empty board loaded with the specified buffer
-		 * @param height
-		 * @param width
-		 * @param buffer
-		 * @return
-		 */
-		public static FastBoard bufferedEmprtBoard(int height, int width, ArrayList<ArrayList<Boolean>> buffer) {
-			return new FastBoard(height,width,DEFAULT_EMPTY,CellProfile.NORMAL,PATTERN_BUFFER,DEFAULT_PERCENT_DEAD,0f,buffer);
-		}
-		/**
-		 * Returns a Board of the specified dimensions populated entirely with dead NORMAL cells.
-		 * @param height
-		 * @param width
-		 * @return
-		 */
-		public static FastBoard emptyBoard(int height, int width) {
-			return new FastBoard(height,width,DEFAULT_EMPTY,CellProfile.NORMAL,BUFFER_OFF,1.0,0f,null);
-		}
 		private ArrayList<ArrayList<Boolean>> buffer;
-
 		private boolean [][] grid;
 		private CellProfile rules;
 		//the mode the buffer behaves in
 		private int bufferMode;
-		
+
 		private float squareSize = 0.0f;
-		
 		//the current y value of the lower left corner of the board in OpenGL render space
 		private float bottom = -1.0f;
-		
 		//the ammount to increase bottom by every update cycle
 		private float timeStep = .1f;
 		
@@ -94,6 +62,38 @@ public class FastBoard {
 			height = grid.size();
 			width = grid.get(0).size();
 		}*/
+		
+		/**
+		 * Returns a Board of the specified dimensions populated entirely with live NORMAL cells. 
+		 * @param height
+		 * @param width
+		 * @param profile
+		 * @return
+		 */
+		public static FastBoard allLive(int height, int width, CellProfile profile) {
+			return new FastBoard(height,width,DEFAULT_FULL,profile,BUFFER_OFF,0.0,0f,null);
+		}
+		
+		/**
+		 * Returns an initially empty board loaded with the specified buffer
+		 * @param height
+		 * @param width
+		 * @param buffer
+		 * @return
+		 */
+		public static FastBoard bufferedEmprtBoard(int height, int width, ArrayList<ArrayList<Boolean>> buffer) {
+			return new FastBoard(height,width,DEFAULT_EMPTY,CellProfile.NORMAL,PATTERN_BUFFER,DEFAULT_PERCENT_DEAD,0f,buffer);
+		}
+		
+		/**
+		 * Returns a Board of the specified dimensions populated entirely with dead NORMAL cells.
+		 * @param height
+		 * @param width
+		 * @return
+		 */
+		public static FastBoard emptyBoard(int height, int width) {
+			return new FastBoard(height,width,DEFAULT_EMPTY,CellProfile.NORMAL,BUFFER_OFF,1.0,0f,null);
+		}
 		
 		/**
 		 * Creates a new Board of the specified dimensions populated with NORMAL Cells.
@@ -165,7 +165,7 @@ public class FastBoard {
 			this.percentDead = percentDead;
 			this.timeStep = timeStep;
 			squareSize = 2f/width;
-			bottom -= 2*squareSize;
+			//bottom -= 2*squareSize;
 			if(buff == null) 
 				buffer = new ArrayList<ArrayList<Boolean>>();
 			else
@@ -235,6 +235,26 @@ public class FastBoard {
 		}
 		
 		/**
+		 * Checks the status of a cell in screen pixel space
+		 * @param x
+		 * @param y
+		 * @return
+		 */
+		public boolean check(int x, int y, int screenWidth, int screenHeight) {
+			int pixPerSquare = screenWidth/grid[0].length;
+			//y = rotateOnAxis(y, screenHeight);
+			int xo = x/pixPerSquare;
+			int yo = (y/pixPerSquare)+6;
+			yo = rotateOnAxis(yo,grid.length);
+			System.out.println("pixPerSquare="+pixPerSquare+" xo="+xo+" yo="+yo);
+			//int xo = (int)(2*(float)x/(float)screenWidth/squareSize); 
+			//int yo = (int)(2*(float)y/(float)screenHeight/squareSize);
+		//	yo = grid.length-yo;
+			setCell(xo,yo,!getCell(xo,yo));
+			return getCell(xo,yo);
+		}
+		
+		/**
 		 * Checks a pattern of cells at position (x,y) and returns true if any of them are alive.
 		 * It essentially functions like a regional call to extinct() except returns true if a Cell is alive.
 		 * If an element of the pattern is < 0 the cell in that location will be ignored.
@@ -284,7 +304,7 @@ public class FastBoard {
 		 * @return
 		 */
 		public boolean getCell(int x, int y){
-			if(x > grid[0].length || y > grid.length)
+			if(x > grid[0].length || y > grid.length || x < 0 || y < 0)
 				return false;
 			return grid[y][x];
 		}
@@ -520,7 +540,7 @@ public class FastBoard {
 				}
 			
 			private void setCell(int x, int y, boolean state){
-				if(x > grid[0].length || y > grid.length)
+				if(x > grid[0].length || y > grid.length || x<0 || y<0)
 					return;
 				grid[y][x]=state;
 			}
@@ -533,13 +553,16 @@ public class FastBoard {
 			 * @param width
 			 * @param height
 			 * @return
-			 * @deprecated
 			 */
-			/*public ArrayList<ArrayList<Boolean>> getSubgrid(int x, int y, int width, int height) {
-				ArrayList<ArrayList<Boolean>> ret = new ArrayList<ArrayList<Boolean>> (height);
-				for (int i = y; i < height; i++) {
-					ret.add((ArrayList<Boolean>) grid[i].subList(x, x+width));
+			public boolean [][] getSubgrid(int x, int y, int width, int height) {
+				boolean [][] ret = new boolean[height][width];
+				for (int i = y; i < height && y < grid.length; i++) {
+					for(int j = x; j < width && x < grid[x].length; j++) {
+						ret[i][j] = grid[y][x];
+						x++;
+					}
+					y++;
 				}
 				return ret;
-			}*/
+			}
 }
