@@ -39,8 +39,8 @@ public class Conway extends Game {
 	
 	@Override
 	public void create() {
-		gol = new FastBoard(400,21);
-		background= new FastBoard(600,120,CellProfile.BACKGROUND);
+		gol = new FastBoard(25,21,CellProfile.NORMAL,.1f);
+		background= new FastBoard(120,120,CellProfile.BACKGROUND,.8,.01f);
 		//meshes = gol.toMeshes(-1);
 		//System.out.println("meshes.length = "+meshes.size());
 		System.out.println("Board height: "+gol.getHeight() + "Board width: "+gol.getWidth());
@@ -89,38 +89,29 @@ public class Conway extends Game {
 	public void pause() {
 	}
 
-	private int t2 = 0;
+	private float t2 = 0f;
 	private float move = .5f;
 	
 	private float time = 0f;
 	@Override
 	public void render() {
-		/*t1 ++;
-		if(t1 > 500){
-			movementIncrement = -movementIncrement;
-			t1 = -200;
-		}*/
-		
-		//camera.rotate(movementIncrement *20, 0, 1, 0);
-		
-		
-		//total ++;
-		//if(total > 1000) {
 		time+=Gdx.graphics.getDeltaTime();
-		//Gdx.app.log("tag", time+"");
+		t2+=Gdx.graphics.getDeltaTime();
+		gol.advanceBoard(Gdx.graphics.getDeltaTime());
+		background.advanceBoard(Gdx.graphics.getDeltaTime());
 		if(time > 1f) {
 			gol.update();
-			background.update();
 			time = 0f;
 		}
-		
-		camera.translate(0, Gdx.graphics.getDeltaTime()*move, 0);
+		if(t2>4f){
+			background.update();
+			t2 = 0f;
+		}
 		camera.update();
 		camera.apply(Gdx.gl10);
-		//spriteBatch.setProjectionMatrix(camera.combined);
 		
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		for(Mesh m :background.toMeshes(-1.5f)) {
+		for(Mesh m : background.toMeshes(-1.5f)){
 			m.render(GL10.GL_TRIANGLE_STRIP,0,4);
 			m.dispose();
 		}
@@ -128,13 +119,6 @@ public class Conway extends Game {
 			m.render(GL10.GL_TRIANGLE_STRIP,0,4);
 			m.dispose();
 		}
-		
-	//	squareMesh.render(GL10.GL_TRIANGLE_STRIP,0,4);
-		//nearSquare.render(GL10.GL_TRIANGLE_STRIP,0,4);
-	/*	spriteBatch.begin();
-		spriteBatch.draw(texture, 0, 0, 1, 1, 0, 0, 
-				texture.getWidth(), texture.getHeight(), false,false);
-		spriteBatch.end();*/
 	}
 
 	@Override
