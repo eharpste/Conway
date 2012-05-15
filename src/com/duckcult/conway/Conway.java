@@ -99,7 +99,7 @@ public class Conway extends Game {
 		//System.out.println(Gdx.graphics.getDeltaTime());
 		if(Gdx.input.isTouched()) {
 		//	Gdx.graphics.
-			gol.check(Gdx.input.getX(),Gdx.input.getY(),800,600);
+			gol.checkScreenSpace(Gdx.input.getX(),Gdx.input.getY(),800,600);
 		}
 		gol.advanceBoard(Gdx.graphics.getDeltaTime());
 		gol.update(Gdx.graphics.getDeltaTime());
