@@ -24,7 +24,8 @@ public class FastBoard {
 		private static final int DEFAULT_RANDOM = 2;
 		private static final double DEFAULT_PERCENT_DEAD = .5;
 		private ArrayList<ArrayList<Boolean>> buffer;
-		private boolean [][] grid;
+		private boolean [][] currGrid;
+		private boolean [][] nextGrid;
 		private CellProfile rules;
 		//the mode the buffer behaves in
 		private int bufferMode;
@@ -33,9 +34,15 @@ public class FastBoard {
 		//the current y value of the lower left corner of the board in OpenGL render space
 		private float bottom = -1.0f;
 		//the ammount to increase bottom by every update cycle
-		private float timeStep = .1f;
+		private float movementPerTick = .1f;
+		//the ammount of time since the last full update of the board
+		private float timeSinceUpdate = 0.0f;
+		//where the board currently is in the current update cycle
+		private int updateIterator = 0;
 		
 		private double percentDead = .5;
+		
+		private float updatesPerSecond = 1.0f;
 		/**
 		 * File based constructor.
 		 * assumes the file is a space delimited grid representation where alive is 1, dead is 0.
@@ -62,6 +69,7 @@ public class FastBoard {
 			height = grid.size();
 			width = grid.get(0).size();
 		}*/
+		
 		
 		/**
 		 * Returns a Board of the specified dimensions populated entirely with live NORMAL cells. 
@@ -163,7 +171,7 @@ public class FastBoard {
 			this.rules = profile;
 			this.bufferMode = bufferMode;
 			this.percentDead = percentDead;
-			this.timeStep = timeStep;
+			this.movementPerTick = timeStep;
 			squareSize = 2f/width;
 			//bottom -= 2*squareSize;
 			if(buff == null) 
@@ -189,16 +197,18 @@ public class FastBoard {
 				case PATTERN_BUFFER:
 				case PATTERN_TO_RANDOM_BUFFER:
 					if(buffer.size()>0 &&buffer.get(0)!=null) {
-						bottom -= deltaTime*timeStep;
+						bottom -= deltaTime*movementPerTick;
 						if(bottom < (-1-2*squareSize)) {
-							for(int i =0; i<grid.length-1;i++) {
-								grid[i]=grid[i+1];
+							for(int i =0; i<currGrid.length-1;i++) {
+								currGrid[i]=currGrid[i+1];
+								nextGrid[i]=nextGrid[i+1];
 							}
 							ArrayList<Boolean> line= buffer.remove(0);
-							grid[grid.length-1] = new boolean[grid[0].length];
-							for(int i = 0; i < grid[0].length; i++) {
-								grid[grid.length-1][i] = line.get(i);
+							currGrid[currGrid.length-1] = new boolean[currGrid[0].length];
+							for(int i = 0; i < currGrid[0].length; i++) {
+								currGrid[currGrid.length-1][i] = line.get(i);
 							}
+							nextGrid[nextGrid.length-1] = currGrid[currGrid.length-1];
 							bottom += squareSize;
 						}
 					}
@@ -208,12 +218,14 @@ public class FastBoard {
 					break;
 				//random case
 				case RANDOM_BUFFER:
-					bottom -= deltaTime*timeStep;
+					bottom -= deltaTime*movementPerTick;
 					if(bottom < (-1-2*squareSize)) {
-						for(int i =0; i<grid.length-1;i++) {
-							grid[i]=grid[i+1];
+						for(int i =0; i<currGrid.length-1;i++) {
+							currGrid[i]=currGrid[i+1];
+							nextGrid[i]=nextGrid[i+1];
 						}
-						grid[grid.length-1] = randomRow(grid[0].length);
+						currGrid[currGrid.length-1] = randomRow(currGrid[0].length);
+						nextGrid[nextGrid.length-1] = currGrid[currGrid.length-1];
 						bottom += squareSize;
 					}
 					break;
@@ -241,11 +253,11 @@ public class FastBoard {
 		 * @return
 		 */
 		public boolean check(int x, int y, int screenWidth, int screenHeight) {
-			int pixPerSquare = screenWidth/grid[0].length;
+			int pixPerSquare = screenWidth/currGrid[0].length;
 			//y = rotateOnAxis(y, screenHeight);
 			int xo = x/pixPerSquare;
 			int yo = (y/pixPerSquare)+6;
-			yo = rotateOnAxis(yo,grid.length);
+			yo = rotateOnAxis(yo,currGrid.length);
 			System.out.println("pixPerSquare="+pixPerSquare+" xo="+xo+" yo="+yo);
 			//int xo = (int)(2*(float)x/(float)screenWidth/squareSize); 
 			//int yo = (int)(2*(float)y/(float)screenHeight/squareSize);
@@ -282,8 +294,8 @@ public class FastBoard {
 		 * @return
 		 */
 			public boolean extinct(){
-				for (int i = 0; i < grid.length; i++){
-					for (int j =0; j < grid[i].length; j++){
+				for (int i = 0; i < currGrid.length; i++){
+					for (int j =0; j < currGrid[i].length; j++){
 						if (getCell(j,i))
 							return false;
 					}
@@ -295,7 +307,7 @@ public class FastBoard {
 		 * returns the height*width of the grid
 		 * @return
 		 */
-		public int getArea(){return grid.length*grid[0].length;}
+		public int getArea(){return currGrid.length*currGrid[0].length;}
 		
 		/**
 		 * Returns the Cell at (x,y).
@@ -304,28 +316,28 @@ public class FastBoard {
 		 * @return
 		 */
 		public boolean getCell(int x, int y){
-			if(x > grid[0].length || y > grid.length || x < 0 || y < 0)
+			if(x > currGrid[0].length || y > currGrid.length || x < 0 || y < 0)
 				return false;
-			return grid[y][x];
+			return currGrid[y][x];
 		}
 		
 		/**
 		 * Returns the height of the Board
 		 * @return
 		 */
-		public int getHeight(){return grid.length;}
+		public int getHeight(){return currGrid.length;}
 		
 		public double getPercentDead(){return percentDead;}
 		
 		public CellProfile getRules() {return this.rules;}
 		
-		public float getTimeStemp() {return timeStep;}
+		public float getTimeStemp() {return movementPerTick;}
 		
 		/**
 		 * Returns the width of the Board
 		 * @return
 		 */
-		public int getWidth(){return grid[0].length;}
+		public int getWidth(){return currGrid[0].length;}
 		
 		/**
 		 * Replaces the current buffer with a new pattern.
@@ -361,7 +373,7 @@ public class FastBoard {
 	 	
 		public void setPercentDead(double percent) {percentDead = percent;}
 		
-		public void setTimeStep(float step){timeStep = step;}
+		public void setTimeStep(float step){movementPerTick = step;}
 		
 		/**
 		 * Returns a 1D arrayList of meshes of the board for rendering.
@@ -376,10 +388,10 @@ public class FastBoard {
 			float b = bottom;
 			float t = b+squareSize;
 			Color color= rules.liveColor;
-			for (int i = 0; i < grid.length; i++) {
+			for (int i = 0; i < currGrid.length; i++) {
 				l = -1;
 				r=squareSize-1;
-				for (int j = 0; j < grid[i].length; j++) {
+				for (int j = 0; j < currGrid[i].length; j++) {
 					if(getCell(j,i)) {
 						Mesh m = new Mesh(true,4,4,
 							new VertexAttribute(Usage.Position,3,"a_position"),
@@ -410,8 +422,8 @@ public class FastBoard {
 		 */
 			public String toString(){
 				String ret = "";
-				for (int i = 0; i < grid.length; i++){
-					for (int j = 0; j < grid[i].length; j++){
+				for (int i = 0; i < currGrid.length; i++){
+					for (int j = 0; j < currGrid[i].length; j++){
 						ret = ret + (getCell(j,i) ? "1" : "0");
 					}
 					ret = ret + "\n";
@@ -423,8 +435,8 @@ public class FastBoard {
 		 * Runs a single tick of the game  of life through the entire grid.
 		 */
 		public void update() {
-			for(int i = 0; i < grid.length; i++) {
-				for (int j = 0; j < grid[i].length; j++) {
+			for(int i = 0; i < currGrid.length; i++) {
+				for (int j = 0; j < currGrid[i].length; j++) {
 					int count = countNeighbors(j,i);
 					if(getCell(j,i)) {
 						if (count < rules.low || count > rules.high)
@@ -439,6 +451,30 @@ public class FastBoard {
 		//	advanceBoard(deltaTime);
 		}
 		
+		public void update(float timeDifference) {
+			timeSinceUpdate += timeDifference;
+			if(updateIterator < currGrid.length) {
+				int i = updateIterator;
+				for(int j = 0; j < currGrid[i].length;j++) {
+					int count = countNeighbors(j,i);
+					if(getCell(j,i)) {
+						if (count < rules.low || count > rules.high)
+							nextGrid[i][j] = false;
+					}
+					else {
+						if (count == rules.birthReq)
+							nextGrid[i][j] = true;
+					}
+				}
+				updateIterator++;
+			}
+			if(timeSinceUpdate > updatesPerSecond && updateIterator >= currGrid.length) {
+				currGrid = nextGrid;
+				timeSinceUpdate = 0.0f;
+				updateIterator = 0;
+			}
+		}
+		
 		/**
 		 * Returns the number neighbors of a cell.
 		 * @param x
@@ -448,21 +484,21 @@ public class FastBoard {
 		private int countNeighbors(int x, int y) {
 			int tot = 0;
 			//lower left
-			if(x>0 && y>0 && grid[y-1][x-1]) tot++;
+			if(x>0 && y>0 && currGrid[y-1][x-1]) tot++;
 			//upper right
-			if(x<grid[y].length-1 && y<grid.length-1 && grid[y+1][x+1]) tot++;
+			if(x<currGrid[y].length-1 && y<currGrid.length-1 && currGrid[y+1][x+1]) tot++;
 			//straight left
-			if(x>0 && grid[y][x-1]) tot++;
+			if(x>0 && currGrid[y][x-1]) tot++;
 			//straight down
-			if(y>0 && grid[y-1][x]) tot++;
+			if(y>0 && currGrid[y-1][x]) tot++;
 			//lower right
-			if(x<grid[y].length-1 && y>0 && grid[y-1][x+1]) tot++; 
+			if(x<currGrid[y].length-1 && y>0 && currGrid[y-1][x+1]) tot++; 
 			//upper left
-			if(x>0 && y<grid.length-1 && grid[y+1][x-1]) tot++;
+			if(x>0 && y<currGrid.length-1 && currGrid[y+1][x-1]) tot++;
 			//straight right
-			if(x<grid[y].length-1 && grid[y][x+1]) tot++;
+			if(x<currGrid[y].length-1 && currGrid[y][x+1]) tot++;
 			//straight up
-			if(y<grid.length-1 && grid[y+1][x]) tot++;
+			if(y<currGrid.length-1 && currGrid[y+1][x]) tot++;
 			return tot;
 		}
 		
@@ -502,16 +538,18 @@ public class FastBoard {
 		 * @param profile
 		 */
 		private void initBoard(int height, int width, int flag) {
-			grid = new boolean[height][width];
+			currGrid = new boolean[height][width];
+			nextGrid = new boolean[height][width];
 			for (int i=0; i<height;i++){
 				switch(flag) {
 				case DEFAULT_EMPTY:
-					grid[i]=emptyRow(width);
+					currGrid[i]=emptyRow(width);
 				case DEFAULT_FULL:
-					grid[i]=fullRow(width);
+					currGrid[i]=fullRow(width);
 				default:
-					grid[i]=randomRow(width);	
+					currGrid[i]=randomRow(width);	
 				}
+				nextGrid[i]=emptyRow(width);
 			}
 		}
 			
@@ -540,9 +578,9 @@ public class FastBoard {
 				}
 			
 			private void setCell(int x, int y, boolean state){
-				if(x > grid[0].length || y > grid.length || x<0 || y<0)
+				if(x > currGrid[0].length || y > currGrid.length || x<0 || y<0)
 					return;
-				grid[y][x]=state;
+				currGrid[y][x]=state;
 			}
 			
 			/**
@@ -556,9 +594,9 @@ public class FastBoard {
 			 */
 			public boolean [][] getSubgrid(int x, int y, int width, int height) {
 				boolean [][] ret = new boolean[height][width];
-				for (int i = y; i < height && y < grid.length; i++) {
-					for(int j = x; j < width && x < grid[x].length; j++) {
-						ret[i][j] = grid[y][x];
+				for (int i = y; i < height && y < currGrid.length; i++) {
+					for(int j = x; j < width && x < currGrid[x].length; j++) {
+						ret[i][j] = currGrid[y][x];
 						x++;
 					}
 					y++;

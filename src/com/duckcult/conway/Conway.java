@@ -39,8 +39,8 @@ public class Conway extends Game {
 	
 	@Override
 	public void create() {
-	//	gol = new FastBoard(25,21,CellProfile.NORMAL,0f);
-		gol = FastBoard.emptyBoard(25, 21);
+		gol = new FastBoard(25,21,CellProfile.NORMAL,0.1f);
+		//gol = FastBoard.emptyBoard(25, 21);
 		//background= new FastBoard(120,120,CellProfile.BACKGROUND,.8,.01f);
 		//meshes = gol.toMeshes(-1);
 		//System.out.println("meshes.length = "+meshes.size());
@@ -96,13 +96,13 @@ public class Conway extends Game {
 	private float time = 0f;
 	@Override
 	public void render() {
-		time+=Gdx.graphics.getDeltaTime();
-		t2+=Gdx.graphics.getDeltaTime();
+		//System.out.println(Gdx.graphics.getDeltaTime());
 		if(Gdx.input.isTouched()) {
 		//	Gdx.graphics.
 			gol.check(Gdx.input.getX(),Gdx.input.getY(),800,600);
 		}
-		//gol.advanceBoard(Gdx.graphics.getDeltaTime());
+		gol.advanceBoard(Gdx.graphics.getDeltaTime());
+		gol.update(Gdx.graphics.getDeltaTime());
 		//background.advanceBoard(Gdx.graphics.getDeltaTime());
 		if(time > 5f) {
 	//		gol.update();
