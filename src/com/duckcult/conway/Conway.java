@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.duckcult.conway.gol.Board;
 import com.duckcult.conway.gol.CellProfile;
 import com.duckcult.conway.gol.FastBoard;
+import com.duckcult.conway.player.Ship;
 import com.duckcult.conway.screens.ConwayScreen;
 
 /**
@@ -36,11 +37,13 @@ public class Conway extends Game {
 	
 	private FastBoard gol;
 	private FastBoard background;
+	private Ship ship;
 	
 	@Override
 	public void create() {
 		gol = new FastBoard(25,21,CellProfile.NORMAL,0.1f);
 		//gol = FastBoard.emptyBoard(25, 21);
+		ship = new Ship();
 		//background= new FastBoard(120,120,CellProfile.BACKGROUND,.8,.01f);
 		//meshes = gol.toMeshes(-1);
 		//System.out.println("meshes.length = "+meshes.size());
@@ -103,6 +106,7 @@ public class Conway extends Game {
 		}
 		gol.advanceBoard(Gdx.graphics.getDeltaTime());
 		gol.update(Gdx.graphics.getDeltaTime());
+		ship.update(Gdx.graphics.getDeltaTime());
 		//background.advanceBoard(Gdx.graphics.getDeltaTime());
 		if(time > 5f) {
 	//		gol.update();
@@ -124,6 +128,9 @@ public class Conway extends Game {
 			m.render(GL10.GL_TRIANGLE_STRIP,0,4);
 			m.dispose();
 		}
+		Mesh sm = ship.toMesh(-1);
+		sm.render(GL10.GL_TRIANGLE_STRIP,0,4);
+		sm.dispose();
 	}
 
 	@Override

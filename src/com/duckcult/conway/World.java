@@ -37,7 +37,7 @@ public class World {
 		viewPortX=this.level.getWidth()/2+this.level.getWidth()%2;
 		this.viewPortHeight = viewPortHeight;
 		this.viewPortWidth = viewPortWidth;
-		this.ship = new Ship(viewPortX,Ship.DEFAULT_START_POSTION);
+	//	this.ship = new Ship(viewPortX,Ship.DEFAULT_START_POSTION);
 		weapons = new ArrayList<Weapon>();
 	}
 	
@@ -56,7 +56,7 @@ public class World {
 		viewPortX=this.level.getWidth()/2+this.level.getWidth()%2;
 		this.viewPortHeight = viewPortHeight;
 		this.viewPortWidth = viewPortWidth;
-		this.ship = new Ship(viewPortX,Ship.DEFAULT_START_POSTION);
+	//	this.ship = new Ship(viewPortX,Ship.DEFAULT_START_POSTION);
 		weapons = new ArrayList<Weapon>();
 	}
 
@@ -91,7 +91,7 @@ public class World {
 		level.update();
 		enemies.update();
 		background.update();
-		handleInput();
+	//	handleInput();
 		for (Weapon w : weapons) {
 			w.update();
 		}
@@ -103,7 +103,7 @@ public class World {
 	public void updateLite() {
 		level.update();
 		enemies.update();
-		handleInput();
+	//	handleInput();
 		for (Weapon w : weapons) {
 			w.update();
 		}
@@ -120,8 +120,8 @@ public class World {
 	 * Collision Detection
 	 */
 	public void check() {
-		if(level.checkCells(ship.getX(), ship.getY(), ship.getShape()) || enemies.checkCells(ship.getX(), ship.getY(), ship.getShape()))
-			ship.kill();
+		//if(level.checkCells(ship.getX(), ship.getY(), ship.getShape()) || enemies.checkCells(ship.getX(), ship.getY(), ship.getShape()))
+			//ship.kill();
 		for(Weapon w : weapons) {
 			if(level.checkCells(w.getX(), w.getY(), w.getShape())){
 				if(w.hit(level))
@@ -164,7 +164,7 @@ public class World {
 	/**
 	 * Process keyboard input. Currently supports WASD and arrows for movement. SPACE bar currently fires a shot.
 	 */
-	public void handleInput() {
+/*	public void handleInput() {
 		if((Gdx.input.isButtonPressed(Input.Keys.W) || Gdx.input.isButtonPressed(Input.Keys.UP)) && ship.y < viewPortHeight) 
 			ship.y++;
 		if((Gdx.input.isButtonPressed(Input.Keys.A) || Gdx.input.isButtonPressed(Input.Keys.LEFT)) && ship.x > 0)
@@ -176,5 +176,5 @@ public class World {
 		if(Gdx.input.isButtonPressed(Input.Keys.SPACE)) {
 			weapons.add(ship.fireShot());
 		}
-	}
+	}*/
 }

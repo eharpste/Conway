@@ -1,54 +1,69 @@
 package com.duckcult.conway.player;
 
-import com.duckcult.conway.gol.BasicCell;
-import com.duckcult.conway.gol.Cell;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 
 public class Ship {
-	public static final int DEFAULT_START_POSTION = 3;
+	private boolean alive = true;
+	private float x,y;
+	private float xv,yv;
+	private float size;
+	private Color color = Color.RED;
 	
-	public int x, y;
-	private boolean alive;
-	
-	public Ship() {
-		x = 0;
-		y = 0;
+	public Ship () {
 		alive = true;
+		x = 0.0f;
+		y = -.75f;
+		size = .07f;
+		xv = .5f;
+		yv = .5f;
 	}
 	
-	public Ship(int x, int y) {
-		this.x = x;
-		this.y = y;
-		alive = true;
+	public  void update(float deltaTime) {
+		if(Gdx.input.isKeyPressed(Input.Keys.W) && y < 1 - size) {
+			y += deltaTime * yv;
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.A) && x > -1 + size) {
+			x -= deltaTime * xv;
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.S) && y > -1 + size){
+			y -= deltaTime * yv;
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.D) && x < 1 - size) {
+			x += deltaTime * xv;
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE))
+			System.out.println("FIRE!");
 	}
 	
-	public int getX() {
-		return x;
+	public void alterPostion(float deltaX, float deltaY) {
+		x += deltaX;
+		y += deltaY;
 	}
 	
-	public int getY() {
-		return y;
+	public void setVelocity(float xv, float yv) {
+		this.xv = xv;
+		this.yv = yv;
 	}
 	
-	public void setPostion(int x, int y) {
-		this.x=x;
-		this.y=y;
-	}
-	
-	public Cell [][] getShape() {
-		Cell [][] ret = new Cell[1][1];
-		ret[0][0] = new BasicCell(true);
-		return ret;
-	}
-	
-	public boolean isAlive(){
-		return alive;
-	}
-	
-	public void kill() {
-		alive = false;
-	}
-	
-	public Weapon fireShot(){
-		return new BasicShot(x, y);
+	public Mesh toMesh(float depth) {
+		float l = x - size/2;
+		float b = y - size/2;
+		float r = x + size/2;
+		float t = y + size/2;
+		Mesh m = new Mesh(true,4,4,
+				new VertexAttribute(Usage.Position,3,"a_position"),
+				new VertexAttribute(Usage.ColorPacked, 4, "a_color"));
+		m.setVertices(new float[] {l, b, depth, color.toFloatBits(),
+								   r, b, depth, color.toFloatBits(),
+								   l, t, depth, color.toFloatBits(),
+								   r, t, depth, color.toFloatBits() });
+		m.setIndices(new short[] {0,1,2,3});
+		return m;
 	}
 }
