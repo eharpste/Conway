@@ -38,16 +38,21 @@ public class Conway extends Game {
 	private FastBoard gol;
 	private FastBoard background;
 	private Ship ship;
+	private World world;
+	
+	private int screenWidth;
+	private int screenHeight;
 	
 	@Override
 	public void create() {
-		gol = new FastBoard(25,21,CellProfile.NORMAL,0.1f);
+		
+		world = new World(new FastBoard(25,21,CellProfile.NORMAL,0.1f));
 		//gol = FastBoard.emptyBoard(25, 21);
-		ship = new Ship();
+		//ship = new Ship();
 		//background= new FastBoard(120,120,CellProfile.BACKGROUND,.8,.01f);
 		//meshes = gol.toMeshes(-1);
 		//System.out.println("meshes.length = "+meshes.size());
-		System.out.println("Board height: "+gol.getHeight() + "Board width: "+gol.getWidth());
+	//	System.out.println("Board height: "+gol.getHeight() + "Board width: "+gol.getWidth());
 		//System.out.println("Board:\n"+gol.toString());
 		/*
 		if(squareMesh == null) {
@@ -93,25 +98,25 @@ public class Conway extends Game {
 	public void pause() {
 	}
 
-	private float t2 = 0f;
-	private float move = .5f;
+	//private float t2 = 0f;
+	//private float move = .5f;
 	
-	private float time = 0f;
+//	private float time = 0f;
 	@Override
 	public void render() {
 		//System.out.println(Gdx.graphics.getDeltaTime());
 		if(Gdx.input.isTouched()) {
-		//	Gdx.graphics.
-			gol.checkScreenSpace(Gdx.input.getX(),Gdx.input.getY(),800,600);
+			gol.checkScreenSpace(Gdx.input.getX(),Gdx.input.getY(),screenWidth,screenHeight);
 		}
-		gol.advanceBoard(Gdx.graphics.getDeltaTime());
-		gol.update(Gdx.graphics.getDeltaTime());
-		ship.update(Gdx.graphics.getDeltaTime());
+	//	gol.advanceBoard(Gdx.graphics.getDeltaTime());
+	//	gol.update(Gdx.graphics.getDeltaTime());
+	//	ship.update(Gdx.graphics.getDeltaTime());
 		//background.advanceBoard(Gdx.graphics.getDeltaTime());
-		if(time > 5f) {
+		world.updated(Gdx.graphics.getDeltaTime());
+	//	if(time > 5f) {
 	//		gol.update();
-			time = 0f;
-		}
+		//	time = 0f;
+	//	}
 		/*if(t2>4f){
 			background.update();
 			t2 = 0f;
@@ -124,19 +129,22 @@ public class Conway extends Game {
 			m.render(GL10.GL_TRIANGLE_STRIP,0,4);
 			m.dispose();
 		}*/
-		for(Mesh m : gol.toMeshes(-1)) {
+		for(Mesh m : world.toMeshes(-1)) {
 			m.render(GL10.GL_TRIANGLE_STRIP,0,4);
 			m.dispose();
 		}
-		Mesh sm = ship.toMesh(-1);
-		sm.render(GL10.GL_TRIANGLE_STRIP,0,4);
-		sm.dispose();
+	//	Mesh sm = ship.toMesh(-1);
+	//	sm.render(GL10.GL_TRIANGLE_STRIP,0,4);
+	//	sm.dispose();
 	}
 
 	@Override
 	public void resize(int width, int height) {
+		screenWidth = width;
+		screenHeight = height;
 		float aspectRatio = (float)width/(float)height;
-		camera = new PerspectiveCamera(67,2f * aspectRatio, 2f);
+		camera = new OrthographicCamera(2f * aspectRatio, 2f);
+		//camera = new PerspectiveCamera(67,2f * aspectRatio, 2f);
 	}
 
 	@Override

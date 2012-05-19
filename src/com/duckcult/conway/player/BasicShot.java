@@ -1,33 +1,46 @@
 package com.duckcult.conway.player;
 
-import com.duckcult.conway.gol.BasicCell;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.duckcult.conway.gol.Board;
-import com.duckcult.conway.gol.Cell;
 
 public class BasicShot extends Weapon {
-	public BasicShot (int x, int y) {
+	public BasicShot (float x, float y) {
 		this.x = x;
 		this.y = y;
-		vx = 0;
-		vy = 1;
+		vx = 0.0f;
+		vy = .5f;
+		color = Color.WHITE;
+		size = .04f;
 	}
 	
 	@Override
-	public	void update() {
-		y+=vy;
+	public	void update(float deltaTime) {
+		y+=vy*deltaTime;
 	}
 
 	@Override
 	public boolean hit(Board board) {
-		board.getCell(x, y).kill();
-		return true;
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
-	public Cell[][] getShape() {
-		Cell [][] ret = new Cell[1][1];
-		ret[0][0] = new BasicCell(true);
-		return ret;
+	public Mesh toMesh(float depth) {
+		float l = x - size/2;
+		float b = y - size/2;
+		float r = x + size/2;
+		float t = y + size/2;
+		Mesh m = new Mesh(true,4,4,
+				new VertexAttribute(Usage.Position,3,"a_position"),
+				new VertexAttribute(Usage.ColorPacked, 4, "a_color"));
+		m.setVertices(new float[] {l, b, depth, color.toFloatBits(),
+								   r, b, depth, color.toFloatBits(),
+								   l, t, depth, color.toFloatBits(),
+								   r, t, depth, color.toFloatBits() });
+		m.setIndices(new short[] {0,1,2,3});
+		return m;
 	}
-
 }

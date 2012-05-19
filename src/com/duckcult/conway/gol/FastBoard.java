@@ -345,7 +345,7 @@ public class FastBoard {
 		 * @return The status of the cell at position (x,y) in board space.
 		 */
 		public boolean getCell(int x, int y){
-			if(x > currGrid[0].length || y > currGrid.length || x < 0 || y < 0)
+			if(x >= currGrid[0].length || y >= currGrid.length || x < 0 || y < 0)
 				return false;
 			return currGrid[y][x];
 		}
@@ -406,7 +406,7 @@ public class FastBoard {
 		 * @param state		The desired state of the target cell.
 		 */
 		private void setCell(int x, int y, boolean state){
-			if(x > currGrid[0].length || y > currGrid.length || x<0 || y<0)
+			if(x >= currGrid[0].length || y >= currGrid.length || x<0 || y<0)
 				return;
 			currGrid[y][x]=state;
 		}

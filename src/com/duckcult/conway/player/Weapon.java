@@ -1,31 +1,33 @@
 package com.duckcult.conway.player;
 
+import com.badlogic.gdx.graphics.Color;
+
+import com.badlogic.gdx.graphics.Mesh;
 import com.duckcult.conway.gol.Board;
-import com.duckcult.conway.gol.Cell;
 
 public abstract class Weapon {
-	protected int x, y, vx, vy;
+	protected float x, y, vx, vy, size;
+	protected Color color;
 	
-	public abstract void update();
+	public abstract void update(float deltaTime);
 	public abstract boolean hit(Board board);
+	public abstract Mesh toMesh(float depth);
 	
-	public void setPosition(int x, int y) {
+	public void setPosition(float x, float y) {
 		this.x=x;
 		this.y=y;
 	}
 	
-	public void setVelocity(int vx, int vy) {
+	public void setVelocity(float vx, float vy) {
 		this.vx=vx;
 		this.vy=vy;
 	}
 	
-	public int getX() {
+	public float getX() {
 		return x;
 	}
 	
-	public int getY() {
+	public float getY() {
 		return y;
 	}
-	
-	public abstract Cell[][] getShape();
 }
