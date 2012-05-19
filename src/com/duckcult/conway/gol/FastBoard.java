@@ -558,8 +558,8 @@ public class FastBoard {
 			return tot;
 		}
 		
-		public void hit(Weapon shot) {
-			
+		public boolean checkShot(Weapon shot) {
+			return false;
 		}
 		
 		/**

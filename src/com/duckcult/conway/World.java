@@ -23,7 +23,7 @@ public class World {
 		board.advanceBoard(deltaTime);
 		player.update(deltaTime, shots);
 		for(int i = 0; i<shots.size(); i++) {
-			if(shots.get(i).getY()>1.5)
+			if(shots.get(i).getRect().y>1.5)
 				shots.remove(i);
 			else
 				shots.get(i).update(deltaTime);
