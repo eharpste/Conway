@@ -14,7 +14,7 @@ public class World {
 	
 	public World (FastBoard board) {
 		this.board = board;
-		player = new Ship();
+		player = new Ship(board.getSquareSize()*.7f);
 		shots = new ArrayList<Weapon>();
 	}
 	
@@ -38,4 +38,10 @@ public class World {
 		}
 		return ret;
 	}
+	
+	public FastBoard getBoard() {return board;}
+	
+	public Ship getShip() {return player;}
+	
+	public ArrayList<Weapon> getShots() {return shots;}
 }

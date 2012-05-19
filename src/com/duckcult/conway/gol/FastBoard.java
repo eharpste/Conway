@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.duckcult.conway.player.Weapon;
 
 /**
  * FastBoard is the main entity that runs all of the Game of Life code.
@@ -388,6 +390,12 @@ public class FastBoard {
 		 * @return the width of the board in number of cells
 		 */
 		public int getWidth(){return currGrid[0].length;}
+		
+		/**
+		 * Returns the render size of the grid squares. 
+		 * @return The render size of the grid suares.
+		 */
+		public float getSquareSize(){return squareSize;}
 //---------------------------------------- end getters ----------------------------------------------------\\	
 
 		
@@ -548,6 +556,10 @@ public class FastBoard {
 			if(x<currGrid[y].length-1 && currGrid[y][x+1]) tot++;							//straight right
 			if(y<currGrid.length-1 && currGrid[y+1][x]) tot++;								//straight up
 			return tot;
+		}
+		
+		public void hit(Weapon shot) {
+			
 		}
 		
 		/**

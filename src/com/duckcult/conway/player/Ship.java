@@ -26,11 +26,11 @@ public class Ship {
 	 */
 	private float timeSinceFire;
 	
-	public Ship () {
+	public Ship (float size) {
 		alive = true;
-		x = 0.0f;
-		y = -.75f;
-		size = .07f;
+		this.size = size;
+		x = 0.0f-size;
+		y = -.75f-size;		
 		xv = .5f;
 		yv = .5f;
 		timeSinceFire = rofDelay;
@@ -41,10 +41,10 @@ public class Ship {
 		if((Gdx.input.isKeyPressed(Input.Keys.W) || (Gdx.input.isKeyPressed(Input.Keys.UP)))  && y < 1 - size) {
 			y += deltaTime * yv;
 		}
-		if((Gdx.input.isKeyPressed(Input.Keys.A) || (Gdx.input.isKeyPressed(Input.Keys.LEFT))) && x > -1 + size) {
+		if((Gdx.input.isKeyPressed(Input.Keys.A) || (Gdx.input.isKeyPressed(Input.Keys.LEFT))) && x > -1) {
 			x -= deltaTime * xv;
 		}
-		if((Gdx.input.isKeyPressed(Input.Keys.S) || (Gdx.input.isKeyPressed(Input.Keys.DOWN))) && y > -1 + size){
+		if((Gdx.input.isKeyPressed(Input.Keys.S) || (Gdx.input.isKeyPressed(Input.Keys.DOWN))) && y > -1){
 			y -= deltaTime * yv;
 		}
 		if((Gdx.input.isKeyPressed(Input.Keys.D) || (Gdx.input.isKeyPressed(Input.Keys.RIGHT))) && x < 1 - size) {
@@ -52,7 +52,7 @@ public class Ship {
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && timeSinceFire > rofDelay) {
 			System.out.println("FIRE!");
-			weapons.add(new BasicShot(x,y));
+			weapons.add(new BasicShot(x+size/2,y+size,size/2));
 			timeSinceFire = 0.0f;
 		}
 	}
@@ -68,10 +68,10 @@ public class Ship {
 	}
 	
 	public Mesh toMesh(float depth) {
-		float l = x - size/2;
-		float b = y - size/2;
-		float r = x + size/2;
-		float t = y + size/2;
+		float l = x;
+		float b = y;
+		float r = x + size;
+		float t = y + size;
 		Mesh m = new Mesh(true,4,4,
 				new VertexAttribute(Usage.Position,3,"a_position"),
 				new VertexAttribute(Usage.ColorPacked, 4, "a_color"));
