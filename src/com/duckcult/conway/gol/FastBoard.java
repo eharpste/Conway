@@ -32,6 +32,7 @@ import com.badlogic.gdx.math.Rectangle;
  * 	the values of bottom, and movementPerTick are in render space units
  * Screen space is defined by LibGDX to handle mouse and touch input and corresponds to the number of pixels from the top left of the screen.
  * 	no parameters current use this but I am working on a mapping function.
+ * I am co-opting the "@deprecated" tag for methods I'm still experimenting with.
  * @author eharpste
  *
  */
@@ -536,6 +537,12 @@ public class FastBoard {
 			}
 		}
 		
+		/**
+		 * Don't use this method.
+		 * I'm experimenting with doing advanceBoard and update in a single parallel coroutine fashion, I have not been successful yet.
+		 * @deprecated 
+		 * @param deltaTime
+		 */
 		public void advanceBoardAlt(float deltaTime) {
 			switch(bufferMode) {
 				case PATTERN_BUFFER:
@@ -583,6 +590,8 @@ public class FastBoard {
 		/**
 		 * Returns a 1D ArrayList of meshes representing the living cells of the board.
 		 * The returned ArrayList only contains Meshes for live cells and is ordered left to right and up.
+		 * This version of toMeshes direct accesses the underlying grid instead of going through toCellObs so it is potentially faster.
+		 * It is not guaranteed that this method will return output identical to the other version.
 		 * @param depth 	The desired z-value to render the board at.
 		 * @return	A 1D ArrayList of meshes representing the living cells of the board.
 		 */
@@ -620,6 +629,11 @@ public class FastBoard {
 			return ret;
 		}
 		
+		/**
+		 * Returns the Cell that is overlapped by the provided Rectangle.
+		 * @param rect	A Rectangle that describes something in render space.
+		 * @return	The Cell that overlaps the given Rectangle in render space.
+		 */
 		public Cell getOverlappedCell(Rectangle rect) {
 			for(Cell c : toCellObs()) {
 				if(c.alive && c.rect.overlaps(rect)) {
@@ -629,14 +643,12 @@ public class FastBoard {
 			return new Cell();
 		}
 		
-		public boolean overlapsLiving(Rectangle rect) {
-			for(Cell c : toCellObs()) {
-				if(c.alive && c.rect.overlaps(rect))
-					return true;
-			}
-			return false;
-		}
-		
+		/**
+		 * Kills the cell described by the provided cell and returns true. 
+		 * If the provided cell is outside the board or already dead it returns false.
+		 * @param c	A Cell object representing a position in the grid.
+		 * @return	true if the cell was killed, false if the cell was outside the board or already dead.
+		 */
 		public boolean killCell(Cell c) {
 			if(c.y > 0 && c.y < currGrid.length && c.x>0 && c.x <currGrid[c.x].length && c.alive) {
 				currGrid[c.y][c.x] = false;
@@ -647,6 +659,13 @@ public class FastBoard {
 			//setCell(c.x, c.y, false);
 		}
 		
+		/**
+		 * Returns a 1D ArrayList of meshes representing the living cells of the board.
+		 * The returned ArrayList only contains Meshes for live cells and is ordered left to right and up.
+		 * This version of the method is potentially less efficient than the other one but I've never noticed a difference.
+		 * @param depth 	The desired z-value to render the board at.
+		 * @return	A 1D ArrayList of meshes representing the living cells of the board.
+		 */
 		public ArrayList<Mesh> toMeshes(float depth) {
 			ArrayList<Mesh> ret = new ArrayList<Mesh>();
 			for(Cell c : toCellObs()) {
@@ -665,6 +684,13 @@ public class FastBoard {
 			return ret;
 		}
 		
+		/**
+		 * Returns the board as a 1D ArrayList of Cell objects.
+		 * The ArrayList is 1D because cell objects maintain pointers to their x,y coordinates in the underlying grid.
+		 * This method is mainly used for collision detection and rendering and exposes that is really possible for the whole
+		 * grid to just be a collection of Cell objects but I haven't made that change yet.
+		 * @return	A 1D ArrayList of the grid as Cell objects.
+		 */
 		private ArrayList<Cell> toCellObs() {
 			ArrayList<Cell> cells = new ArrayList<Cell>(getArea());
 			float x = -1;
@@ -682,6 +708,7 @@ public class FastBoard {
 		
 		/**
 		 * Runs a single tick of the Game of Life on the entire board following the rule set in rules.
+		 * This does not take into account deltaTime and will run the entire board in a single call.
 		 */
 		public void update() {
 			for(int i = 0; i < currGrid.length; i++) {
@@ -730,6 +757,12 @@ public class FastBoard {
 			}
 		}
 		
+		/**
+		 * Don't use this method.
+		 * I'm experimenting with doing advanceBoard and update in the same coroutine fashion, it has not been successful yet.
+		 * @deprecated 
+		 * @param deltaTime
+		 */
 		public void updateAlt(float deltaTime) {
 			timeSinceUpdate += deltaTime;
 			//update a row
@@ -791,10 +824,23 @@ public class FastBoard {
 			}
 		}
 		
+		/**
+		 * Kills the cell that is overlapped by the given Rectangle in render space and returns true if it succeeded.
+		 * If the Rectangle does not overlap a living cell or doesn't overlap any cell it will return false;
+		 * @param rect	A Rectangle that describes something in render space.
+		 * @return	true if the kill was successful, false if the cell is already dead or the the rectangle is outside the board.
+		 */
 		public boolean killOverlapCell(Rectangle rect) {
 			return killCell(getOverlappedCell(rect));
 		}
-		
+	
+		/**
+		 * Don't use this method.
+		 * This is part of the effort to make update and advanceBoard part of the same coroutine.
+		 * Technically this method could be used in the current existing system but I'd rather not.
+		 * @deprecated
+		 * @return	The next row to be added as the board advances.
+		 */
 		private boolean [] nextRow() {
 			switch(bufferMode) {
 				case PATTERN_BUFFER:
@@ -827,6 +873,11 @@ public class FastBoard {
 			}
 		}
 		
+		/**
+		 * Kills the given number of rows.
+		 * This is used to allow the player's ship to have a safe spawn area instead of instantly dying.
+		 * @param rows	The number of rows to kill.
+		 */
 		public void makeSafeZone(int rows) {
 			if(rows > currGrid.length)
 				rows = currGrid.length;
@@ -835,6 +886,12 @@ public class FastBoard {
 			}
  		}
 		
+		/**
+		 * Kills all cells that fall bellow the given height in render space.
+		 * This is used to allow the player ship to have a safe spawn area instead of instantly dying.
+		 * Technically this version is better because its based on the render space used in collision detection.
+		 * @param renderHeight	The height in render space that you want to clear the board to.
+		 */
 		public void makeSafeZone(float renderHeight) {
 			for(int i = 0; i < currGrid.length && (i*squareSize-1 < renderHeight); i++) {
 				currGrid[i] = emptyRow(currGrid[i].length);

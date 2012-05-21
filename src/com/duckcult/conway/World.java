@@ -22,16 +22,15 @@ public class World {
 	public void update(float deltaTime) {
 		board.update(deltaTime);
 		board.advanceBoard(deltaTime);
-		if(player.isAlive() && board.overlapsLiving(player.getRect()))
+		if(player.isAlive() && board.getOverlappedCell(player.getRect()).alive)
 			player.kill();
 		player.update(deltaTime, shots);
-		board.overlapsLiving(player.getRect());
 		for(int i = 0; i<shots.size(); i++) {
 			if(shots.get(i).getRect().y>1.5)
 				shots.remove(i);
 			else {
 				shots.get(i).update(deltaTime);
-				if(board.killOverlapCell(shots.get(i).getRect()))
+				if(shots.get(i).hit(board))
 					shots.remove(i);
 			}
 		}

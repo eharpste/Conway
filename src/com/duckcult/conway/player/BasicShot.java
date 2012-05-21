@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.math.Rectangle;
 import com.duckcult.conway.gol.Board;
+import com.duckcult.conway.gol.FastBoard;
 
 public class BasicShot extends Weapon {
 	public BasicShot (Rectangle origin) {			
@@ -21,9 +22,8 @@ public class BasicShot extends Weapon {
 	}
 
 	@Override
-	public boolean hit(Board board) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean hit(FastBoard board) {
+		return board.killOverlapCell(rect);
 	}
 
 	@Override
