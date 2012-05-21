@@ -1,16 +1,20 @@
-package com.duckcult.conway.player;
+package com.duckcult.conway.player.weapons;
 
 import com.badlogic.gdx.graphics.Color;
 
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.math.Rectangle;
 import com.duckcult.conway.gol.FastBoard;
+import com.duckcult.conway.utils.ColorUtils;
 
-public abstract class Weapon {
+public abstract class Shot {
 	//protected float x, y, vx, vy, size;
 	protected float vx,vy;
 	protected Rectangle rect;
 	protected Color color;
+	
+	protected int originWeapon;
+	protected int originPlayer;
 	
 	public abstract void update(float deltaTime);
 	public abstract boolean hit(FastBoard board);
@@ -29,4 +33,14 @@ public abstract class Weapon {
 		this.vx=vx;
 		this.vy=vy;
 	}
+	
+	public void setOriginInfo(int playerNumber, int weaponNumber,Color color) {
+		originWeapon = weaponNumber;
+		originPlayer = playerNumber;
+		this.color = ColorUtils.desaturate(color, .3f);
+	}
+	
+	public int getOriginPlayer() {return originPlayer;}
+	
+	public int getOriginWeapon() {return originWeapon;}
 }

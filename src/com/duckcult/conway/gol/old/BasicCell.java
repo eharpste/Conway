@@ -1,8 +1,9 @@
-package com.duckcult.conway.gol;
+package com.duckcult.conway.gol.old;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
+import com.duckcult.conway.gol.CellProfile;
 
 /**
  * The main Cell that is used in the Board Class.

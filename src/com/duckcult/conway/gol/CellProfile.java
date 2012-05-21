@@ -43,13 +43,13 @@ public class CellProfile {
 	/** A Cell that has a lower birth requirement and spreads faster on sparse boards and renders yellow when alive. */
 	public static final CellProfile BREED 		= new CellProfile(new Color(1,1,0,1),Color.BLACK,1,2,3,1,3);
 	
-	Color liveColor;
-	Color deadColor;
-	int birthReq;
-	int low;
-	int high;
-	int deathAge;
-	int type;
+	public Color liveColor;
+	public Color deadColor;
+	public int birthReq;
+	public int low;
+	public int high;
+	public int deathAge;
+	public int type;
 	
 	/**
 	 * Creates a new CellProfile for cells that want to use special rules.

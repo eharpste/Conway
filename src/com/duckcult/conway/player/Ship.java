@@ -3,60 +3,89 @@ package com.duckcult.conway.player;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.math.Rectangle;
+import com.duckcult.conway.player.weapons.BeamWeapon;
+import com.duckcult.conway.player.weapons.RapidFireWeapon;
+import com.duckcult.conway.player.weapons.StandardWeapon;
+import com.duckcult.conway.player.weapons.Shot;
+import com.duckcult.conway.player.weapons.TrippleShotWeapon;
+import com.duckcult.conway.player.weapons.Weapon;
 
 public class Ship {
 	private boolean alive = true;
 	private Rectangle rect;
 	private float xv,yv;
-	private Color color = Color.RED;
-	private Rectangle [] deathRects = null; 
+	private Color color;
+	private Rectangle [] deathRects = null;
+	private Weapon [] weapons;
+	private int playerNumber;
+	private KeyBindings keyBindings;
+	
+	private int weaponMode = 0;
 	
 	private float timeSinceDeath = 0.0f;
 	private float deathAnimationTime = 1.25f;
 	private float shardSpeed = .075f;
-	/**
-	 * The number of seconds to wait between shots.
-	 */
-	private float rofDelay = .25f;
-	/**
-	 * the number of seconds since the last shot was fired.
-	 */
-	private float timeSinceFire;
+	
+	private float weaponModeSwitchTime = 1.0f;
+	private float timeSinceWeaponSwitch = 0.0f;
 	
 	public Ship (float size) {
 		alive = true;
 		rect = new Rectangle(0.0f-size,-.75f-size,size,size);	
 		xv = .5f;
 		yv = .5f;
-		timeSinceFire = rofDelay;
+		color = Color.RED;
+		playerNumber = 1;
+		keyBindings = KeyBindings.WASD_QE_SPACE;
+		weapons = new Weapon [4];
+		weapons[0]= new StandardWeapon();
+		weapons[1]= new RapidFireWeapon();
+		weapons[2]= new TrippleShotWeapon();
+		weapons[3]= new BeamWeapon();
 	}
 	
-	public  void update(float deltaTime, ArrayList<Weapon> weapons) {
+	public Ship(float size, int playerNumber, Color playerColor, KeyBindings keyBindings){
+		this(size);
+		color = playerColor;
+		this.playerNumber = playerNumber;
+		this.keyBindings = keyBindings;
+	}
+	
+	public  void update(float deltaTime, ArrayList<Shot> shots) {
 		if(alive){
-			timeSinceFire += deltaTime;
-			if((Gdx.input.isKeyPressed(Input.Keys.W) || (Gdx.input.isKeyPressed(Input.Keys.UP)))  && rect.y < 1 - rect.height) {
+			for(Weapon w : weapons) {
+				w.update(deltaTime);
+			}
+			if(timeSinceWeaponSwitch <= weaponModeSwitchTime) 
+				timeSinceWeaponSwitch +=deltaTime;
+			if(weaponMode > 0 && Gdx.input.isKeyPressed(keyBindings.prevWeapon()) && timeSinceWeaponSwitch > weaponModeSwitchTime) {
+				weaponMode--;
+				timeSinceWeaponSwitch = 0.0f;
+			}
+			if(weaponMode < weapons.length-1 && Gdx.input.isKeyPressed(keyBindings.nextWeapon()) && timeSinceWeaponSwitch > weaponModeSwitchTime) {
+				weaponMode++;
+				timeSinceWeaponSwitch = 0.0f;
+			}
+			if(Gdx.input.isKeyPressed(keyBindings.up())  && rect.y < 1 - rect.height) {
 				rect.y += deltaTime * yv;
 			}
-			if((Gdx.input.isKeyPressed(Input.Keys.A) || (Gdx.input.isKeyPressed(Input.Keys.LEFT))) && rect.x > -1){
+			if(Gdx.input.isKeyPressed(keyBindings.left()) && rect.x > -1){
 				rect.x -= deltaTime * xv;
 			}
-			if((Gdx.input.isKeyPressed(Input.Keys.S) || (Gdx.input.isKeyPressed(Input.Keys.DOWN))) && rect.y > -1){
+			if(Gdx.input.isKeyPressed(keyBindings.down()) && rect.y > -1){
 				rect.y -= deltaTime * yv;
 			}
-			if((Gdx.input.isKeyPressed(Input.Keys.D) || (Gdx.input.isKeyPressed(Input.Keys.RIGHT))) && rect.x < 1 - rect.width) {
+			if(Gdx.input.isKeyPressed(keyBindings.right()) && rect.x < 1 - rect.width) {
 				rect.x += deltaTime * xv;
 			}
-			if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && timeSinceFire > rofDelay) {
-			//	System.out.println("FIRE!");
-				weapons.add(new BasicShot(this.rect));
-				timeSinceFire = 0.0f;
+			if(Gdx.input.isKeyPressed(keyBindings.fire())) {
+				fire(shots);
 			}
 		}
 		else {
@@ -128,5 +157,29 @@ public class Ship {
 			}
 		}
 		return ret;
+	}
+	
+	public int getPlayerNumber() {return playerNumber;}
+	
+	public Color getColor() {return new Color(color);}
+	
+	public int getWeaponMode () { return weaponMode;}
+	
+	private void fire(ArrayList<Shot> shots) {
+		switch(weaponMode) {
+			case 1:
+				shots.addAll(weapons[1].fire(this));
+				break;
+			case 2:
+				shots.addAll(weapons[2].fire(this));
+				break;
+			case 3:
+				shots.addAll(weapons[3].fire(this));
+			case 0:
+			default:
+				shots.addAll(weapons[0].fire(this));
+				break;
+					
+		}
 	}
 }

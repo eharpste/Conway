@@ -1,4 +1,4 @@
-package com.duckcult.conway.gol;
+package com.duckcult.conway.gol.old;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,6 +8,7 @@ import java.util.Scanner;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.duckcult.conway.gol.CellProfile;
 
 /**
  * The Board class runs all of the Game of Life code.
