@@ -20,7 +20,7 @@ public class Board {
 	 * The percentage used to determine how many cells to make dead when using randomized boards.
 	 */
 	public static final double PERCENT_DEAD = 0.7;
-	private ArrayList<ArrayList<Cell>> grid;
+	private ArrayList<ArrayList<OldCell>> grid;
 	
 	private int height;
 	private int width;
@@ -32,12 +32,12 @@ public class Board {
 	 */
 	public Board(File f) throws FileNotFoundException {
 		Scanner fileScan = new Scanner(f);
-		grid = new ArrayList<ArrayList<Cell>>();
+		grid = new ArrayList<ArrayList<OldCell>>();
 		String [] line;
-		ArrayList<Cell>temp;
+		ArrayList<OldCell>temp;
 		do {
 			line = fileScan.nextLine().split(" ");
-			temp = new ArrayList<Cell>();
+			temp = new ArrayList<OldCell>();
 			temp.ensureCapacity(line.length);
 			for (String s: line) {
 				temp.add(new BasicCell(s.equals("1")));
@@ -122,7 +122,7 @@ public class Board {
 	 * @param y
 	 * @return
 	 */
-	public Cell getCell(int x, int y){return grid.get(y).get(x);}
+	public OldCell getCell(int x, int y){return grid.get(y).get(x);}
 	
 	/**
 	 * Initialized the Board with the the given dimensions and CellProfile.
@@ -136,7 +136,7 @@ public class Board {
 	 * @param profile
 	 */
 	private void initBoard(int height, int width, int flag, CellProfile profile) {
-		grid = new ArrayList<ArrayList<Cell>>(height);
+		grid = new ArrayList<ArrayList<OldCell>>(height);
 		for (int i=0; i<height;i++){
 			switch(flag) {
 			case 1:
@@ -157,8 +157,8 @@ public class Board {
 	 * @param profile
 	 * @return
 	 */
-	private ArrayList<Cell> fullRow (int length, CellProfile profile) {
-		ArrayList<Cell> temp = new ArrayList<Cell>(length);
+	private ArrayList<OldCell> fullRow (int length, CellProfile profile) {
+		ArrayList<OldCell> temp = new ArrayList<OldCell>(length);
 		for (int i=0;i<length;i++)
 			temp.add(new BasicCell(true, profile));
 		return temp;
@@ -170,8 +170,8 @@ public class Board {
 	 * @param profile
 	 * @return
 	 */
-	private ArrayList<Cell> randomRow(int length, CellProfile profile) {
-		ArrayList<Cell> temp = new ArrayList<Cell>(length);
+	private ArrayList<OldCell> randomRow(int length, CellProfile profile) {
+		ArrayList<OldCell> temp = new ArrayList<OldCell>(length);
 		for (int i=0; i<length;i++){
 			temp.add(new BasicCell(Math.random()>PERCENT_DEAD, profile));
 		}
@@ -184,8 +184,8 @@ public class Board {
 	 * @param profile
 	 * @return
 	 */
-	private ArrayList<Cell> emptyRow(int length, CellProfile profile) {
-		ArrayList<Cell> temp = new ArrayList<Cell>(length);
+	private ArrayList<OldCell> emptyRow(int length, CellProfile profile) {
+		ArrayList<OldCell> temp = new ArrayList<OldCell>(length);
 		for (int i=0;i<length;i++)
 			temp.add(new BasicCell(false, profile));
 		return temp;
@@ -206,7 +206,7 @@ public class Board {
 	 */
 	public void update() {
 		for(int i = 0; i < height; i++) {
-			ArrayList<Cell> temp = grid.get(i);
+			ArrayList<OldCell> temp = grid.get(i);
 			for (int j = 0; j < width; j++) {
 				temp.get(j).check(getNeighbors(j,i));
 			}
@@ -223,8 +223,8 @@ public class Board {
 	 * @param y
 	 * @return
 	 */
-	private ArrayList<Cell> getNeighbors(int x, int y) {
-		ArrayList<Cell> temp = new ArrayList<Cell>();
+	private ArrayList<OldCell> getNeighbors(int x, int y) {
+		ArrayList<OldCell> temp = new ArrayList<OldCell>();
 		if(x>0 && y>0) temp.add(getCell(x-1,y-1));
 		if(x<width-1 && y<height-1)temp.add(getCell(x+1,y+1));
 		if(x>0)	temp.add(getCell(x-1,y));
@@ -294,7 +294,7 @@ public class Board {
 		public String toString(){
 			String ret = "";
 			for (int i = 0; i < grid.size(); i++){
-				ArrayList<Cell> temp = grid.get(i);
+				ArrayList<OldCell> temp = grid.get(i);
 				for (int j = 0; j < temp.size(); j++){
 					ret = ret + temp.get(j);
 				}
@@ -309,7 +309,7 @@ public class Board {
 	 */
 		public boolean extinct(){
 			for (int i = 0; i < grid.size(); i++){
-				ArrayList<Cell> temp = grid.get(i);
+				ArrayList<OldCell> temp = grid.get(i);
 				for (int j =0; j < temp.size(); j++){
 					if (temp.get(j).isAlive())
 						return false;
@@ -326,7 +326,7 @@ public class Board {
 		 * @param y
 		 * @param cells
 		 */
-		public void setCells(int x, int y, Cell[][] cells) {
+		public void setCells(int x, int y, OldCell[][] cells) {
 			for (int i = 0; i < cells.length; i++) {
 				for (int j = 0; j < cells[0].length; j++) {
 					if(cells[i][j]!=null){
@@ -347,7 +347,7 @@ public class Board {
 		 * @param cells
 		 * @return
 		 */
-		public boolean checkCells(int x, int y, Cell[][]cells) {
+		public boolean checkCells(int x, int y, OldCell[][]cells) {
 			for (int i = 0; i < cells.length; i++) {
 				for (int j = 0; j < cells[0].length; j++) {
 					if(cells[i][j]!=null && grid.get(x).get(y).isAlive())
@@ -368,10 +368,10 @@ public class Board {
 		 * @param height
 		 * @return
 		 */
-		public ArrayList<ArrayList<Cell>> getSubgrid(int x, int y, int width, int height) {
-			ArrayList<ArrayList<Cell>> ret = new ArrayList<ArrayList<Cell>> (height);
+		public ArrayList<ArrayList<OldCell>> getSubgrid(int x, int y, int width, int height) {
+			ArrayList<ArrayList<OldCell>> ret = new ArrayList<ArrayList<OldCell>> (height);
 			for (int i = y; i < height; i++) {
-				ret.add((ArrayList<Cell>) grid.get(i).subList(x, x+width));
+				ret.add((ArrayList<OldCell>) grid.get(i).subList(x, x+width));
 			}
 			return ret;
 		}

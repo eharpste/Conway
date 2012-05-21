@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Color;
  * @author eharpste
  *
  */
-public class BasicCell extends Cell {	
+public class BasicCell extends OldCell {	
 	int age;
 	Color liveColor;
 	Color deadColor;
@@ -106,7 +106,7 @@ public class BasicCell extends Cell {
 	 * Checks the number of living neighbors of the cell and processes the appropriate life and death states based on
 	 * the CellProfile rules.
 	 */
-	public void check(ArrayList<Cell> neighbors) {
+	public void check(ArrayList<OldCell> neighbors) {
 		wasAlive = alive;
 		int liveNeighbors = countLiveNeighbors(neighbors);
 		if (alive) {		
@@ -166,9 +166,9 @@ public class BasicCell extends Cell {
 	 * @param neighbors
 	 * @return
 	 */
-	private int countLiveNeighbors(ArrayList<Cell> neighbors) {
+	private int countLiveNeighbors(ArrayList<OldCell> neighbors) {
 		int count=0;
-		for(Cell c : neighbors) {
+		for(OldCell c : neighbors) {
 			if(c.isAlive())
 				count++;
 		}
@@ -182,9 +182,9 @@ public class BasicCell extends Cell {
 	 * @param neighbors
 	 * @return
 	 */
-	private int mostCommonNeighborType(ArrayList<Cell> neighbors) {
+	private int mostCommonNeighborType(ArrayList<OldCell> neighbors) {
 		int counts [] = new int [CellProfile.NUMBER_OF_TYPES];
-		for (Cell c : neighbors) {
+		for (OldCell c : neighbors) {
 			if(c.wasAlive())
 				counts[c.getType()]++;
 		}

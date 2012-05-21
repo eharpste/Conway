@@ -16,23 +16,31 @@ public class World {
 		this.board = board;
 		player = new Ship(board.getSquareSize()*.7f);
 		shots = new ArrayList<Weapon>();
+		board.makeSafeZone(player.getRect().y+player.getRect().getHeight()+.3f);
 	}
 	
-	public void updated(float deltaTime) {
+	public void update(float deltaTime) {
 		board.update(deltaTime);
 		board.advanceBoard(deltaTime);
+		if(player.isAlive() && board.overlapsLiving(player.getRect()))
+			player.kill();
 		player.update(deltaTime, shots);
+		board.overlapsLiving(player.getRect());
 		for(int i = 0; i<shots.size(); i++) {
 			if(shots.get(i).getRect().y>1.5)
 				shots.remove(i);
-			else
+			else {
 				shots.get(i).update(deltaTime);
+				if(board.killOverlapCell(shots.get(i).getRect()))
+					shots.remove(i);
+			}
 		}
+		
 	}
 	
 	public ArrayList<Mesh> toMeshes(float depth) {
 		ArrayList<Mesh> ret = board.toMeshes(depth);
-		ret.add(player.toMesh(depth));
+		ret.addAll(player.toMeshes(depth));
 		for(Weapon w : shots) {
 			ret.add(w.toMesh(depth));
 		}

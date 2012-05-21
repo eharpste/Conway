@@ -1,24 +1,13 @@
 package com.duckcult.conway;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.duckcult.conway.gol.Board;
 import com.duckcult.conway.gol.CellProfile;
 import com.duckcult.conway.gol.FastBoard;
-import com.duckcult.conway.player.Ship;
 import com.duckcult.conway.screens.ConwayScreen;
 
 /**
@@ -34,10 +23,6 @@ public class Conway extends Game {
 	private Camera camera;
 	//private Mesh nearSquare; 
 	
-	
-	private FastBoard gol;
-	private FastBoard background;
-	private Ship ship;
 	private World world;
 	
 	private int screenWidth;
@@ -112,7 +97,7 @@ public class Conway extends Game {
 	//	gol.update(Gdx.graphics.getDeltaTime());
 	//	ship.update(Gdx.graphics.getDeltaTime());
 		//background.advanceBoard(Gdx.graphics.getDeltaTime());
-		world.updated(Gdx.graphics.getDeltaTime());
+		world.update(Gdx.graphics.getDeltaTime());
 	//	if(time > 5f) {
 	//		gol.update();
 		//	time = 0f;

@@ -6,8 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.duckcult.conway.player.Weapon;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  * FastBoard is the main entity that runs all of the Game of Life code.
@@ -537,6 +536,21 @@ public class FastBoard {
 			}
 		}
 		
+		public void advanceBoardAlt(float deltaTime) {
+			switch(bufferMode) {
+				case PATTERN_BUFFER:
+					if(buffer == null || buffer.size() >= 0) {
+						return;
+					}
+				case PATTERN_TO_RANDOM_BUFFER:
+				case RANDOM_BUFFER:
+					bottom -= deltaTime*movementPerTick;
+					break;
+				default:
+					return;
+			}
+		}
+		
 		/**
 		 * Counts the number of living neighbors surrounding the cell at (x,y).
 		 * The method will account for cells that are on the edge of the board.
@@ -558,10 +572,6 @@ public class FastBoard {
 			return tot;
 		}
 		
-		public boolean checkShot(Weapon shot) {
-			return false;
-		}
-		
 		/**
 		 * Replaces the current buffer with a new pattern.
 		 * @param pattern The pattern to replace the current buffer with.
@@ -576,7 +586,7 @@ public class FastBoard {
 		 * @param depth 	The desired z-value to render the board at.
 		 * @return	A 1D ArrayList of meshes representing the living cells of the board.
 		 */
-		public ArrayList<Mesh> toMeshes(float depth) {
+		public ArrayList<Mesh> toMeshesDirect(float depth) {
 			ArrayList<Mesh> ret = new ArrayList<Mesh>(); 
 			float l = -1;
 			float r = squareSize-1;
@@ -608,6 +618,66 @@ public class FastBoard {
 					return ret;
 			}
 			return ret;
+		}
+		
+		public Cell getOverlappedCell(Rectangle rect) {
+			for(Cell c : toCellObs()) {
+				if(c.alive && c.rect.overlaps(rect)) {
+					return c;
+				}
+			}
+			return new Cell();
+		}
+		
+		public boolean overlapsLiving(Rectangle rect) {
+			for(Cell c : toCellObs()) {
+				if(c.alive && c.rect.overlaps(rect))
+					return true;
+			}
+			return false;
+		}
+		
+		public boolean killCell(Cell c) {
+			if(c.y > 0 && c.y < currGrid.length && c.x>0 && c.x <currGrid[c.x].length && c.alive) {
+				currGrid[c.y][c.x] = false;
+				nextGrid[c.y][c.x] = false;
+				return true;
+			}
+			return false;
+			//setCell(c.x, c.y, false);
+		}
+		
+		public ArrayList<Mesh> toMeshes(float depth) {
+			ArrayList<Mesh> ret = new ArrayList<Mesh>();
+			for(Cell c : toCellObs()) {
+				if(c.alive) {
+					Mesh m = new Mesh(true,4,4,
+							new VertexAttribute(Usage.Position,3,"a_position"),
+							new VertexAttribute(Usage.ColorPacked, 4, "a_color"));
+						m.setVertices(new float[] {c.rect.x, c.rect.y, depth, rules.liveColor.toFloatBits(),
+												   c.rect.x+c.rect.width, c.rect.y, depth, rules.liveColor.toFloatBits(),
+												   c.rect.x, c.rect.y+c.rect.height, depth, rules.liveColor.toFloatBits(),
+												   c.rect.x+c.rect.width, c.rect.y+c.rect.height, depth, rules.liveColor.toFloatBits() });
+						m.setIndices(new short[] {0,1,2,3});
+						ret.add(m); 
+				}
+			}
+			return ret;
+		}
+		
+		private ArrayList<Cell> toCellObs() {
+			ArrayList<Cell> cells = new ArrayList<Cell>(getArea());
+			float x = -1;
+			float y = bottom;
+			for(int i = 0; i<currGrid.length; i++) {
+				x = -1;
+				for (int j = 0; j < currGrid[i].length; j++) {
+					cells.add(new Cell(j,i,new Rectangle(x,y,squareSize,squareSize),getCell(j,i)));
+					x += squareSize;
+				}
+				y += squareSize;
+			}
+			return cells;
 		}
 		
 		/**
@@ -658,7 +728,118 @@ public class FastBoard {
 				timeSinceUpdate = 0.0f;
 				updateIterator = 0;
 			}
-		}	
+		}
+		
+		public void updateAlt(float deltaTime) {
+			timeSinceUpdate += deltaTime;
+			//update a row
+			if(updateIterator < currGrid.length) {
+				int i = updateIterator;
+				for(int j = 0; j < currGrid[i].length;j++) {
+					int count = countNeighbors(j,i);
+					if(getCell(j,i)) {
+						if (count < rules.low || count > rules.high) {
+							switch(bufferMode) {
+								case PATTERN_BUFFER :
+								case PATTERN_TO_RANDOM_BUFFER:
+								case RANDOM_BUFFER:
+									if(i >0)
+										nextGrid[i-1][j] = false;
+									break;
+								default:
+									nextGrid[i][j] = false;
+										
+							}
+						}
+							
+					}
+					else {
+						if (count == rules.birthReq) {
+							switch(bufferMode) {
+							case PATTERN_BUFFER :
+							case PATTERN_TO_RANDOM_BUFFER:
+							case RANDOM_BUFFER:
+								if(i>0)
+									nextGrid[i-1][j] = true;
+								break;
+							default:
+								nextGrid[i][j] = true;
+									
+							}
+						}
+					}
+				}
+				updateIterator++;
+			}
+			//commit the new board
+			if(timeSinceUpdate > secondsPerUpdate && updateIterator >= currGrid.length) {
+				currGrid = nextGrid;
+				switch(bufferMode) {
+					case PATTERN_BUFFER:
+						if(buffer == null || buffer.size()<=0) {
+							break;
+						}
+					case PATTERN_TO_RANDOM_BUFFER:
+					case RANDOM_BUFFER:
+						currGrid[currGrid.length-1] = nextRow();
+						bottom+=squareSize;
+						break;
+				}
+				timeSinceUpdate = 0.0f;
+				updateIterator = 0;
+				
+			}
+		}
+		
+		public boolean killOverlapCell(Rectangle rect) {
+			return killCell(getOverlappedCell(rect));
+		}
+		
+		private boolean [] nextRow() {
+			switch(bufferMode) {
+				case PATTERN_BUFFER:
+					if(buffer != null && buffer.size() > 0) {
+						boolean [] ret = new boolean[getWidth()];
+						ArrayList<Boolean> next = buffer.remove(0);
+						for(int i = 0; i < next.size(); i++)
+							ret[i] = next.get(i);
+						return ret;
+					}
+					else {
+						return currGrid[currGrid.length-1];
+					}
+				case PATTERN_TO_RANDOM_BUFFER:
+					if(buffer != null && buffer.size() > 0) {
+						boolean [] ret = new boolean[getWidth()];
+						ArrayList<Boolean> next = buffer.remove(0);
+						for(int i = 0; i < next.size(); i++)
+							ret[i] = next.get(i);
+						if(buffer.size() == 0)
+							bufferMode = RANDOM_BUFFER;
+						return ret;
+					}
+					else
+						return emptyRow(getWidth());
+				case RANDOM_BUFFER:
+					return randomRow(getWidth());
+				default:
+					return currGrid[currGrid.length-1];
+			}
+		}
+		
+		public void makeSafeZone(int rows) {
+			if(rows > currGrid.length)
+				rows = currGrid.length;
+			for(int i =0; i<rows;i++) {
+				currGrid[i] = emptyRow(currGrid[i].length);
+			}
+ 		}
+		
+		public void makeSafeZone(float renderHeight) {
+			for(int i = 0; i < currGrid.length && (i*squareSize-1 < renderHeight); i++) {
+				currGrid[i] = emptyRow(currGrid[i].length);
+			}
+		}
 //----------------------------------- end major methods ---------------------------------------------------\\
 
 
