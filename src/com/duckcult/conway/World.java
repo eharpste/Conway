@@ -2,6 +2,8 @@ package com.duckcult.conway;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Mesh;
 import com.duckcult.conway.gol.FastBoard;
 import com.duckcult.conway.player.Ship;
@@ -34,7 +36,8 @@ public class World {
 					shots.remove(i);
 			}
 		}
-		
+		if(!player.isAlive() && Gdx.input.isKeyPressed(Input.Keys.R))
+			player = new Ship(board.getSquareSize()*.7f);
 	}
 	
 	public ArrayList<Mesh> toMeshes(float depth) {
