@@ -1,24 +1,31 @@
 package com.duckcult.conway.player.weapons;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.duckcult.conway.gol.FastBoard;
+import com.duckcult.conway.player.Ship;
 
 public class BasicShot extends Shot {
+	/**
+	 * The default speed of BasicShots.
+	 */
 	public static final float DEFAULT_SPEED = .5f;
+	/**
+	 * A faster default speed for BasicShots.
+	 */
+	public static final float DEFAULT_FAST = .75f;
 	
 	/**
 	 * Creates a new BasicShot that is half the size of its origin and moves up at the default speed.
 	 * @param origin
 	 */
-	public BasicShot (Rectangle origin) {			
-		this.rect = new Rectangle(origin.x+origin.width/4f, origin.y+origin.height, origin.width/2, origin.height/2);
-		vx = 0.0f;
-		vy = DEFAULT_SPEED;
-		color = Color.WHITE;
+	public BasicShot(Ship origin) {
+		this.rect = new Rectangle(origin.getRect().x+origin.getRect().width/4f, origin.getRect().y+origin.getRect().height, origin.getRect().width/2, origin.getRect().height/2);
+		this.velocity = new Vector2(0.0f,DEFAULT_SPEED);
+		setOriginInfo(origin.getPlayerNumber(), origin.getWeaponMode(), origin.getColor());
 	}
 	
 	/**
@@ -27,27 +34,62 @@ public class BasicShot extends Shot {
 	 * @param vy
 	 * @param origin
 	 */
-	public BasicShot(float vx, float vy, Rectangle origin) {
-		this.rect = new Rectangle(origin.x+origin.width/4f, origin.y+origin.height, origin.width/2, origin.height/2);
-		this.vx = vx;
-		this.vy = vy;
-		color = Color.WHITE;
+	public BasicShot(float vx, float vy, Ship origin) {
+		this.rect = new Rectangle(origin.getRect().x+origin.getRect().width/4f, origin.getRect().y+origin.getRect().height, origin.getRect().width/2, origin.getRect().height/2);
+		this.velocity = new Vector2(vx,vy);
+		setOriginInfo(origin.getPlayerNumber(), origin.getWeaponMode(), origin.getColor());
 	}
 	
-	public BasicShot(float x, float y, float xv, float yv, Rectangle origin) {
-		this.rect = new Rectangle (x, y, origin.width/2f, origin.height/2f);
-		this.vx = xv;
-		this.vy = yv;
-		color = Color.WHITE;
+	/**
+	 * Creates a new BasicShot that is half the size of its origin, starts at the given position, and moves at the given velocities.
+	 * @param x
+	 * @param y
+	 * @param vx
+	 * @param vy
+	 * @param origin
+	 */
+	public BasicShot(float x, float y, float vx, float vy, Ship origin) {
+		this.rect = new Rectangle(x, y, origin.getRect().width/2, origin.getRect().height/2);
+		this.velocity = new Vector2(vx,vy);
+		setOriginInfo(origin.getPlayerNumber(), origin.getWeaponMode(), origin.getColor());
+	}
+	
+	/**
+	 * Creates a new BasicShot that is half the size of its origin, and moves at the given velocity.
+	 * @param velocity
+	 * @param origin
+	 */
+	public BasicShot(Vector2 velocity, Ship origin) {
+		this.rect = new Rectangle(origin.getRect().x+origin.getRect().width/4f, origin.getRect().y+origin.getRect().height, origin.getRect().width/2, origin.getRect().height/2);
+		this.velocity = velocity;
+		setOriginInfo(origin.getPlayerNumber(), origin.getWeaponMode(), origin.getColor());
+	}
+	
+	/**
+	 * Creates a new BasicShot that is half the size of its origin, starts at the given position, and moves at the given velocity.
+	 * @param startPosition
+	 * @param velocity
+	 * @param origin
+	 */
+	public BasicShot(Vector2 startPosition, Vector2 velocity, Ship origin) {
+		this.rect = new Rectangle(startPosition.x, startPosition.y, origin.getRect().width/2, origin.getRect().height/2);
+		this.velocity = velocity;
+		setOriginInfo(origin.getPlayerNumber(), origin.getWeaponMode(), origin.getColor());
 	}
 	
 	@Override
+	/**
+	 * Updates the Shot's position by its velocities multiplied by the deltaTime.
+	 */
 	public	void update(float deltaTime) {
-		rect.y+=vy*deltaTime;
-		rect.x+=vx*deltaTime;
+		rect.y+=velocity.y*deltaTime;
+		rect.x+=velocity.x*deltaTime;
 	}
 
 	@Override
+	/**
+	 * Calls killOverlapedCell in the FastBoard class and returns true is successful.
+	 */
 	public boolean hit(FastBoard board) {
 		return board.killOverlapCell(rect);
 	}

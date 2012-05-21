@@ -2,7 +2,6 @@ package com.duckcult.conway.player.weapons;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.duckcult.conway.player.Ship;
 
 public class RapidFireWeapon extends Weapon {
@@ -19,15 +18,11 @@ public class RapidFireWeapon extends Weapon {
 		ArrayList<Shot> ret = new ArrayList<Shot>();
 		if(timeSinceFire>=rofDelay) {
 			if(one){
-				BasicShot b =new BasicShot(origin.getRect().x,origin.getRect().y+origin.getRect().height,0,BasicShot.DEFAULT_SPEED,origin.getRect());
-				b.setOriginInfo(origin.getPlayerNumber(), origin.getWeaponMode(), origin.getColor());
-				ret.add(b);
+				ret.add(new BasicShot(origin.getRect().x,origin.getRect().y+origin.getRect().height,0,BasicShot.DEFAULT_FAST,origin));
 				one = false;
 			}
 			else {
-				BasicShot b =new BasicShot(origin.getRect().x+origin.getRect().width/2,origin.getRect().y+origin.getRect().height,0,BasicShot.DEFAULT_SPEED,origin.getRect());
-				b.setOriginInfo(origin.getPlayerNumber(), origin.getWeaponMode(), origin.getColor());
-				ret.add(b);
+				ret.add(new BasicShot(origin.getRect().x+origin.getRect().width/2,origin.getRect().y+origin.getRect().height,0,BasicShot.DEFAULT_FAST,origin));
 				one = true;
 			}
 			timeSinceFire = 0.0f;

@@ -2,7 +2,6 @@ package com.duckcult.conway.player.weapons;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.duckcult.conway.player.Ship;
 
 public class StandardWeapon extends Weapon {
@@ -17,9 +16,7 @@ public class StandardWeapon extends Weapon {
 	public ArrayList<Shot> fire(Ship origin) {
 		ArrayList<Shot> ret = new ArrayList<Shot>();
 		if(timeSinceFire>=rofDelay) {
-			BasicShot b = new BasicShot(origin.getRect());
-			b.setOriginInfo(origin.getPlayerNumber(), origin.getWeaponMode(), origin.getColor());
-			ret.add(b);
+			ret.add(new BasicShot(origin));
 			timeSinceFire = 0.0f;
 		}
 		return ret;

@@ -933,7 +933,7 @@ public class FastBoard {
 			int xo = x/pixPerSquare;
 			int yo = (y/pixPerSquare)+6;
 			yo = rotateOnAxis(yo,currGrid.length);
-			System.out.println("pixPerSquare="+pixPerSquare+" xo="+xo+" yo="+yo);
+			//System.out.println("pixPerSquare="+pixPerSquare+" xo="+xo+" yo="+yo);
 			//int xo = (int)(2*(float)x/(float)screenWidth/squareSize); 
 			//int yo = (int)(2*(float)y/(float)screenHeight/squareSize);
 		//	yo = grid.length-yo;

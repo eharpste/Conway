@@ -2,7 +2,6 @@ package com.duckcult.conway.player.weapons;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.duckcult.conway.player.Ship;
 
 public class BeamWeapon extends Weapon {
@@ -24,9 +23,7 @@ public class BeamWeapon extends Weapon {
 			timeSinceFire=0.0f;
 		}
 		if(firing) {
-			BasicShot b = new BasicShot(origin.getRect());
-			b.setOriginInfo(origin.getPlayerNumber(), origin.getWeaponMode(), origin.getColor());
-			ret.add(b);
+			ret.add(new BasicShot(origin));
 		}
 		return ret;
 	}
