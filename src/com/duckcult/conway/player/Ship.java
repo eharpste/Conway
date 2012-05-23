@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.duckcult.conway.player.weapons.BeamWeapon;
 import com.duckcult.conway.player.weapons.QuadShotWeapon;
 import com.duckcult.conway.player.weapons.RapidFireWeapon;
@@ -79,7 +80,7 @@ public class Ship {
 	 * The time delay between when the player is allowed to switch weapons.
 	 * This isn't meant to be a balance hindrance its mainly to prevent the change weapon button from being spammed by the render loop.
 	 */
-	private float weaponModeSwitchTime = 1.0f;
+	private float weaponModeSwitchTime = .2f;
 	/**
 	 * The time since the player last switch weapons.
 	 */
@@ -191,9 +192,14 @@ public class Ship {
 	 * @param deltaX	The ammount to change X by
 	 * @param deltaY	The ammount to change Y by
 	 */
-	public void alterPostion(float deltaX, float deltaY) {
+	public void alterPosition(float deltaX, float deltaY) {
 		rect.x += deltaX;
 		rect.y += deltaY;
+	}
+	
+	public void setPosition(Vector2 position) {
+		rect.x = position.x;
+		rect.y = position.y;
 	}
 	
 	/**
@@ -292,5 +298,12 @@ public class Ship {
 			shots.addAll(weapons[weaponMode].fire(this));
 		else
 			shots.addAll(weapons[0].fire(this));
+	}
+	
+	public boolean checkCrash(Ship that) {
+		if(this.rect.overlaps(that.getRect()))
+			return true;
+		else
+			return false;
 	}
 }

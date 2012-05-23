@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.duckcult.conway.gol.FastBoard;
+import com.duckcult.conway.player.Ship;
 import com.duckcult.conway.utils.ColorUtils;
 
 public abstract class Shot {
@@ -36,13 +37,21 @@ public abstract class Shot {
 	 */
 	public abstract void update(float deltaTime);
 	/**
-	 * Runs to see if the shot hit anything, process the effect of the hit, and returns true if the hit is successful.
+	 * Runs to see if the shot hit anything on a board, process the effect of the hit, and returns true if the hit is successful.
 	 * Returning true from this method is a signal to the world to remove the shot. In general this means that the shot
 	 * successfully hit its target but this is not a strict contract.
 	 * @param board	The board to check for collisions
 	 * @return true is the World should remove the shot after running the hit (usually meaning it hit something), false otherwise.
 	 */
 	public abstract boolean hit(FastBoard board);
+	/**
+	 * Runs to see if the shot hit the ship, process the effect of the hit, and returns true if the hit is successful.
+	 * Returning true from this method is a signal to the world to remove the shot. In general this means that the shot
+	 * successfully hit its target but this is not a strict contract.
+	 * @param ship
+	 * @return
+	 */
+	public abstract boolean hit(Ship ship);
 	/**
 	 * Returns the Mesh representation of the Shot for rendering
 	 * @param depth	the depth to render at

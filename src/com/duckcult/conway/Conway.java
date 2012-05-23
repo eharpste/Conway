@@ -23,14 +23,14 @@ public class Conway extends Game {
 	private Camera camera;
 	//private Mesh nearSquare; 
 	
-	private World world;
+	private World2P world;
 	
 	private int screenWidth;
 	private int screenHeight;
 	
 	@Override
 	public void create() {
-		world = new World(new FastBoard(25,21,CellProfile.NORMAL,0.1f));
+		world = new World2P(new FastBoard(25,21,CellProfile.NORMAL,0.1f));
 	}
 
 	@Override

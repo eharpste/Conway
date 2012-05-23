@@ -106,4 +106,13 @@ public class BasicShot extends Shot {
 		m.setIndices(new short[] {0,1,2,3});
 		return m;
 	}
+
+	@Override
+	public boolean hit(Ship ship) {
+		if(ship.getRect().overlaps(rect) && ship.getPlayerNumber() != this.originPlayer) {
+			ship.kill();
+			return true;
+		}
+		return false;
+	}
 }
