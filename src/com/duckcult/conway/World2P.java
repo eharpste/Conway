@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.duckcult.conway.gol.FastBoard;
 import com.duckcult.conway.player.KeyBindings;
 import com.duckcult.conway.player.Ship;
@@ -90,25 +91,27 @@ public class World2P {
 			timeSinceRespawn += deltaTime;
 		else {
 			if(Gdx.input.isKeyPressed(Input.Keys.R)){
-				if(!player1.isAlive()) {
-					player1 = spawnPlayer(player1);
+				if(!player1.isAlive() && timeSinceRespawn >= respawnDelay) {
+					reSpawnPlayer(player1);
+					timeSinceRespawn = 0.0f;
 				}
-				if(!player2.isAlive()) {
-					player2 = spawnPlayer(player2);
+				if(!player2.isAlive() && timeSinceRespawn >= respawnDelay) {
+					reSpawnPlayer(player2);
+					timeSinceRespawn = 0.0f;
 				}
-				timeSinceRespawn = 0.0f;
 			}
 		}
 	}
 	
-	private Ship spawnPlayer(int playerNumber, Color playerColor) {
-		Ship player = new Ship(board.getSquareSize()*.7f);
+	private Ship spawnPlayer(int playerNumber, Color playerColor, KeyBindings bindings) {
+		Ship player = new Ship(board.getSquareSize()*.7f, playerNumber, playerColor,bindings);
 		board.makeSafeZone(player.getRect().y+player.getRect().getHeight()+.3f);
 		return player;
 	}
 	
-	private Ship spawnPlayer(Ship oldShip){
-		return spawnPlayer(oldShip.getPlayerNumber(), oldShip.getColor());
+	private void reSpawnPlayer(Ship oldShip){
+		oldShip.respawn(new Vector2(0,-.75f));
+		board.makeSafeZone(oldShip.getRect().y+oldShip.getRect().getHeight()+.3f);
 	}
 	
 	public ArrayList<Mesh> toMeshes(float depth) {

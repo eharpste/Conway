@@ -232,6 +232,28 @@ public class Ship {
 		deathRects[1] = new Rectangle(rect.x+rect.width/2f, rect.y, rect.width/2f, rect.height/2f);
 		deathRects[2] = new Rectangle(rect.x, rect.y+rect.height/2f,rect.width/2f,rect.height/2f);
 		deathRects[3] = new Rectangle(rect.x+rect.width/2f,rect.y+rect.height/2f,rect.width/2f,rect.height/2f);
+		timeSinceDeath = 0.0f;
+	}
+	
+	/**
+	 * Respawns the Ship at the given postion.
+	 * @param position
+	 */
+	public void respawn(Vector2 position) {
+		this.respawn();
+		rect.x=position.x;
+		rect.y=position.y;
+	}
+	
+	/**
+	 * Respawns the Ship.
+	 * Sets alive to true, timeSinceWeaponSwitch to 0 and weaponMode to 0.
+	 */
+	public void respawn() {
+		alive = true;
+		deathRects = null;
+		timeSinceWeaponSwitch = 0.0f;
+		weaponMode = 0;
 	}
 	
 	/**
@@ -286,6 +308,12 @@ public class Ship {
 	 * @return	The number o the  currently active weapon.
 	 */
 	public int getWeaponMode () { return weaponMode;}
+	
+	/**
+	 * Returns the KeyBindings the ship uses for controls.
+	 * @return the KeyBindings the ship uses for controls.
+	 */
+	public KeyBindings getKeyBindings() {return keyBindings;}
 	
 	/**
 	 * Calls fire() on the currently active weapon, and adds any resulting Shots to the shots ArrayList.
