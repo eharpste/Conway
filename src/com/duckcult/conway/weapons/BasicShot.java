@@ -1,4 +1,4 @@
-package com.duckcult.conway.player.weapons;
+package com.duckcult.conway.weapons;
 
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
@@ -109,7 +109,7 @@ public class BasicShot extends Shot {
 
 	@Override
 	public boolean hit(Ship ship) {
-		if(ship.getRect().overlaps(rect) && ship.getPlayerNumber() != this.originPlayer) {
+		if(ship.getRect().overlaps(rect) && ship.getPlayerNumber() != this.originPlayer && ship.isAlive()) {
 			ship.kill();
 			return true;
 		}

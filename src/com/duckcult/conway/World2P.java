@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.duckcult.conway.gol.FastBoard;
 import com.duckcult.conway.player.KeyBindings;
 import com.duckcult.conway.player.Ship;
-import com.duckcult.conway.player.weapons.Shot;
+import com.duckcult.conway.weapons.Shot;
 
 public class World2P {
 	private static final Color [] playerColors = {Color.RED, Color.BLUE, new Color(1,1,0,1), new Color (1,0,1,1), new Color(0,1,1,1)};
@@ -102,13 +102,7 @@ public class World2P {
 			}
 		}
 	}
-	
-	private Ship spawnPlayer(int playerNumber, Color playerColor, KeyBindings bindings) {
-		Ship player = new Ship(board.getSquareSize()*.7f, playerNumber, playerColor,bindings);
-		board.makeSafeZone(player.getRect().y+player.getRect().getHeight()+.3f);
-		return player;
-	}
-	
+
 	private void reSpawnPlayer(Ship oldShip){
 		oldShip.respawn(new Vector2(0,-.75f));
 		board.makeSafeZone(oldShip.getRect().y+oldShip.getRect().getHeight()+.3f);
@@ -126,8 +120,8 @@ public class World2P {
 	
 	private void spawn2Players() {
 		//ArrayList<Ship> ret = new ArrayList<Ship>(2);
-		player1 = new Ship(board.getSquareSize()*.7f,1,playerColors[0],KeyBindings.WASD_QE_LSHIFT);
-		player2 = new Ship(board.getSquareSize()*.7f,2,playerColors[1],KeyBindings.IJKL_UO_SLASH);
+		player1 = new Ship(board.getSquareSize()*.7f,1,playerColors[0],KeyBindings.WASD_QE_V);
+		player2 = new Ship(board.getSquareSize()*.7f,2,playerColors[1],KeyBindings.OKLSEMICOLON_IP_N);
 		player1.alterPosition(-.5f, 0);
 		player2.alterPosition(.5f,0);
 		board.makeSafeZone(player1.getRect().y+player1.getRect().getHeight()+.3f);

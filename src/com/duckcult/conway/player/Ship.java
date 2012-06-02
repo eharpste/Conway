@@ -10,14 +10,14 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.duckcult.conway.player.weapons.BeamWeapon;
-import com.duckcult.conway.player.weapons.QuadShotWeapon;
-import com.duckcult.conway.player.weapons.RapidFireWeapon;
-import com.duckcult.conway.player.weapons.SpiralWeapon;
-import com.duckcult.conway.player.weapons.StandardWeapon;
-import com.duckcult.conway.player.weapons.Shot;
-import com.duckcult.conway.player.weapons.TrippleShotWeapon;
-import com.duckcult.conway.player.weapons.Weapon;
+import com.duckcult.conway.weapons.BeamWeapon;
+import com.duckcult.conway.weapons.QuadShotWeapon;
+import com.duckcult.conway.weapons.RapidFireWeapon;
+import com.duckcult.conway.weapons.Shot;
+import com.duckcult.conway.weapons.SpiralWeapon;
+import com.duckcult.conway.weapons.StandardWeapon;
+import com.duckcult.conway.weapons.TrippleShotWeapon;
+import com.duckcult.conway.weapons.Weapon;
 
 public class Ship {
 	/**
@@ -226,6 +226,8 @@ public class Ship {
 	 * When the ship is dead it turns into 4 rectangles that move away from the center of where the ship was.
 	 */
 	public void kill() {
+		if(!alive)
+			return;
 		alive = false;
 		deathRects = new Rectangle[4];
 		deathRects[0] = new Rectangle(rect.x,rect.y,rect.width/2f,rect.height/2f);

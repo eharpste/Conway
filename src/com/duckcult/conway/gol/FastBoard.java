@@ -99,6 +99,14 @@ public class FastBoard {
 		 */
 		private boolean [][] nextGrid;
 		/**
+		 * An ArrayList of Cell objects to hold a copy of objects to optimize multiple calls to toCellObs
+		 */
+		private ArrayList<Cell> cells;
+		/**
+		 * A flag for whether toCellObs has been called yet this tick. It is set to false in update()
+		 */
+		private boolean cellObsThisTick=false;
+		/**
 		 * The rule set that the board will abide by while running updates.
 		 */
 		private CellProfile rules;
@@ -650,9 +658,10 @@ public class FastBoard {
 		 * @return	true if the cell was killed, false if the cell was outside the board or already dead.
 		 */
 		public boolean killCell(Cell c) {
-			if(c.y > 0 && c.y < currGrid.length && c.x>0 && c.x <currGrid[c.x].length && c.alive) {
+			if(c.y >= 0 && c.y < currGrid.length && c.x>=0 && c.x <currGrid[c.x].length && c.alive) {
 				currGrid[c.y][c.x] = false;
 				nextGrid[c.y][c.x] = false;
+				c.alive=false;
 				return true;
 			}
 			return false;
@@ -692,16 +701,18 @@ public class FastBoard {
 		 * @return	A 1D ArrayList of the grid as Cell objects.
 		 */
 		private ArrayList<Cell> toCellObs() {
-			ArrayList<Cell> cells = new ArrayList<Cell>(getArea());
-			float x = -1;
-			float y = bottom;
-			for(int i = 0; i<currGrid.length; i++) {
-				x = -1;
-				for (int j = 0; j < currGrid[i].length; j++) {
-					cells.add(new Cell(j,i,new Rectangle(x,y,squareSize,squareSize),getCell(j,i)));
-					x += squareSize;
+			if(!cellObsThisTick) {
+				cells = new ArrayList<Cell>(getArea());
+				float x = -1;
+				float y = bottom;
+				for(int i = 0; i<currGrid.length; i++) {
+					x = -1;
+					for (int j = 0; j < currGrid[i].length; j++) {
+						cells.add(new Cell(j,i,new Rectangle(x,y,squareSize,squareSize),getCell(j,i)));
+						x += squareSize;
+					}
+					y += squareSize;
 				}
-				y += squareSize;
 			}
 			return cells;
 		}
@@ -735,6 +746,7 @@ public class FastBoard {
 		 */
 		public void update(float deltaTime) {
 			timeSinceUpdate += deltaTime;
+			cellObsThisTick = false;
 			if(updateIterator < currGrid.length) {
 				int i = updateIterator;
 				for(int j = 0; j < currGrid[i].length;j++) {

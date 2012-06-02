@@ -1,4 +1,4 @@
-package com.duckcult.conway.player.weapons;
+package com.duckcult.conway.weapons;
 
 import java.util.ArrayList;
 
