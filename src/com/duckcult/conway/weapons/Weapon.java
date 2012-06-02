@@ -48,7 +48,7 @@ public abstract class Weapon {
 	public float getRofDelay(){return rofDelay;}
 	
 	/**
-	 * By default this method adds to deltaTime to timeSince fire for ROF control.
+	 * By default this method adds deltaTime to timeSince fire for ROF control.
 	 * As most weapons only need update to do this it is defined explicitly here though weapons could override it.
 	 * @param deltaTime	The time since the last frame render.
 	 */
@@ -63,7 +63,7 @@ public abstract class Weapon {
 	 * @return
 	 */
 	protected float getDiagonal(float speed) {
-		return (float)Math.sqrt(speed*speed/2);
+		return speed*MathUtils.cosDeg(45);
 	}
 	
 	/**
