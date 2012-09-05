@@ -1,7 +1,6 @@
 package com.duckcult.conway.weapons;
 
-import java.util.ArrayList;
-
+import com.badlogic.gdx.utils.Array;
 import com.duckcult.conway.player.Ship;
 
 public class RapidFireWeapon extends Weapon {
@@ -14,8 +13,8 @@ public class RapidFireWeapon extends Weapon {
 	}
 	
 	@Override
-	public ArrayList<Shot> fire(Ship origin) {
-		ArrayList<Shot> ret = new ArrayList<Shot>();
+	public Array<Shot> fire(Ship origin) {
+		Array<Shot> ret = new Array<Shot>();
 		if(timeSinceFire>=rofDelay) {
 			if(one){
 				ret.add(new BasicShot(origin.getRect().x,origin.getRect().y+origin.getRect().height,0,BasicShot.DEFAULT_FAST,origin));

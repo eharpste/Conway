@@ -1,9 +1,8 @@
 package com.duckcult.conway.weapons;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.duckcult.conway.player.Ship;
 
 public abstract class Weapon {
@@ -34,7 +33,7 @@ public abstract class Weapon {
 	 * @param origin The Ship firing the weapon, its properties are commonly needed to spawn shots.
 	 * @return	An ArrayList of the shots from a single firing of this weapon, or an empty ArrayList if the weapon is not ready to fire yet.
 	 */
-	public abstract ArrayList<Shot> fire(Ship origin);
+	public abstract Array<Shot> fire(Ship origin);
 	
 	/**
 	 * Returns the name of the weapon.

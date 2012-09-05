@@ -1,15 +1,17 @@
 package com.duckcult.conway.player;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import com.duckcult.conway.Conway;
 import com.duckcult.conway.weapons.BeamWeapon;
 import com.duckcult.conway.weapons.QuadShotWeapon;
 import com.duckcult.conway.weapons.RapidFireWeapon;
@@ -20,6 +22,11 @@ import com.duckcult.conway.weapons.TrippleShotWeapon;
 import com.duckcult.conway.weapons.Weapon;
 
 public class Ship {
+	private static Texture texture;
+
+	public static void setGlobalTexture (Texture text) {
+		texture = text;
+	}
 	/**
 	 * Whether or not the Ship is alive.
 	 */
@@ -92,9 +99,9 @@ public class Ship {
 	 */
 	public Ship (float size) {
 		alive = true;
-		rect = new Rectangle(0.0f-size,-.75f-size,size,size);	
-		xv = .5f;
-		yv = .5f;
+		rect = new Rectangle(Conway.screenWidth/2-size/2,size*4,size,size);	
+		xv = 50f;
+		yv = 50f;
 		color = Color.RED;
 		playerNumber = 1;
 		keyBindings = KeyBindings.WASD_QE_SPACE;
@@ -132,7 +139,7 @@ public class Ship {
 	 * @param deltaTime	The time since the last render frame
 	 * @param shots		The shots currently out in the world, if the ship fires it will add new shots to this list.
 	 */
-	public  void update(float deltaTime, ArrayList<Shot> shots) {
+	public  void update(float deltaTime, Array<Shot> shots) {
 		if(alive){
 			for(Weapon w : weapons) {
 				w.update(deltaTime);
@@ -147,16 +154,16 @@ public class Ship {
 				weaponMode++;
 				timeSinceWeaponSwitch = 0.0f;
 			}
-			if(Gdx.input.isKeyPressed(keyBindings.up())  && rect.y < 1 - rect.height) {
+			if(Gdx.input.isKeyPressed(keyBindings.up())  && rect.y < Conway.screenHeight) {
 				rect.y += deltaTime * yv;
 			}
-			if(Gdx.input.isKeyPressed(keyBindings.left()) && rect.x > -1){
+			if(Gdx.input.isKeyPressed(keyBindings.left()) && rect.x > 0){
 				rect.x -= deltaTime * xv;
 			}
-			if(Gdx.input.isKeyPressed(keyBindings.down()) && rect.y > -1){
+			if(Gdx.input.isKeyPressed(keyBindings.down()) && rect.y > 0){
 				rect.y -= deltaTime * yv;
 			}
-			if(Gdx.input.isKeyPressed(keyBindings.right()) && rect.x < 1 - rect.width) {
+			if(Gdx.input.isKeyPressed(keyBindings.right()) && rect.x < Conway.screenWidth) {
 				rect.x += deltaTime * xv;
 			}
 			if(Gdx.input.isKeyPressed(keyBindings.fire())) {
@@ -264,8 +271,8 @@ public class Ship {
 	 * @param depth The depth to render at.
 	 * @return	A collection of Meshes to render to represent the ship.
 	 */
-	public ArrayList<Mesh> toMeshes(float depth) {
-		ArrayList<Mesh> ret = new ArrayList<Mesh>();
+	public Array<Mesh> toMeshes(float depth) {
+		Array<Mesh> ret = new Array<Mesh>();
 		if(alive) {
 			Mesh m = new Mesh(true,4,4,
 					new VertexAttribute(Usage.Position,3,"a_position"),
@@ -323,7 +330,7 @@ public class Ship {
 	 * this method will be called whether the weapon is ready or not.
 	 * @param shots	An ArrayList of all the Shots currently in the World.
 	 */
-	private void fire(ArrayList<Shot> shots) {
+	private void fire(Array<Shot> shots) {
 		if(weaponMode < weapons.length && weaponMode > 0)
 			shots.addAll(weapons[weaponMode].fire(this));
 		else
@@ -335,5 +342,13 @@ public class Ship {
 			return true;
 		else
 			return false;
+	}
+	
+	public void draw(SpriteBatch batch) {
+		if(alive) {
+			batch.setColor(color);
+			batch.draw(texture, rect.x, rect.y,rect.width,rect.height);
+			batch.setColor(Color.WHITE);
+		}
 	}
 }

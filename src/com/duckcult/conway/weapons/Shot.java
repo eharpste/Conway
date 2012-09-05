@@ -1,8 +1,10 @@
 package com.duckcult.conway.weapons;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.duckcult.conway.gol.FastBoard;
@@ -10,6 +12,11 @@ import com.duckcult.conway.player.Ship;
 import com.duckcult.conway.utils.ColorUtils;
 
 public abstract class Shot {
+	protected static Texture globalTexture;
+	public static void setGlobalTexture(Texture text) {
+		globalTexture = text;
+	}
+	
 	/**
 	 * A 2D Vector representing the x and y components of the current velocity of the shot.
 	 */
@@ -30,6 +37,7 @@ public abstract class Shot {
 	 * The ID of the player that fired this shot.
 	 */
 	protected int originPlayer;
+	
 	/**
 	 * Runs a standard frame update on the shot.
 	 * Called once per frame.
@@ -58,6 +66,12 @@ public abstract class Shot {
 	 * @return	The Mesh representation of the Shot for rendering.
 	 */
 	public abstract Mesh toMesh(float depth);
+	
+	public void draw(SpriteBatch batch) {
+		batch.setColor(color);
+		batch.draw(globalTexture, rect.x, rect.y, rect.width, rect.height);
+		batch.setColor(Color.WHITE);
+	}
 	
 	/**
 	 * Returns the Rectangle representing the Shot.

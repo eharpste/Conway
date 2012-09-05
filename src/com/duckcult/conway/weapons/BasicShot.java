@@ -1,22 +1,31 @@
 package com.duckcult.conway.weapons;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.duckcult.conway.gol.FastBoard;
 import com.duckcult.conway.player.Ship;
 
 public class BasicShot extends Shot {
+	private static Texture texture;
+	
 	/**
 	 * The default speed of BasicShots.
 	 */
-	public static final float DEFAULT_SPEED = .5f;
+	public static final float DEFAULT_SPEED = 30f;
 	/**
 	 * A faster default speed for BasicShots.
 	 */
-	public static final float DEFAULT_FAST = .75f;
+	public static final float DEFAULT_FAST = 50f;
+	
+	public static void setGlobalTexture(Texture text) {
+		texture = text;
+	}
 	
 	/**
 	 * Creates a new BasicShot that is half the size of its origin and moves up at the default speed.
@@ -114,5 +123,12 @@ public class BasicShot extends Shot {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void draw(SpriteBatch batch) {
+		batch.setColor(color);
+		batch.draw(texture, rect.x, rect.y,rect.width,rect.height);
+		batch.setColor(Color.WHITE);
 	}
 }

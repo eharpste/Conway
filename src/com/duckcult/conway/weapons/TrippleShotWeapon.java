@@ -1,7 +1,6 @@
 package com.duckcult.conway.weapons;
 
-import java.util.ArrayList;
-
+import com.badlogic.gdx.utils.Array;
 import com.duckcult.conway.player.Ship;
 
 public class TrippleShotWeapon extends Weapon {
@@ -12,8 +11,8 @@ public class TrippleShotWeapon extends Weapon {
 	}
 	
 	@Override
-	public ArrayList<Shot> fire(Ship origin) {
-		ArrayList<Shot> ret = new ArrayList<Shot>();
+	public Array<Shot> fire(Ship origin) {
+		Array<Shot> ret = new Array<Shot>();
 		if(timeSinceFire>=rofDelay) {
 			float mag = getDiagonal(BasicShot.DEFAULT_SPEED);
 			ret.add(new BasicShot(origin));

@@ -1,8 +1,7 @@
 package com.duckcult.conway.weapons;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.duckcult.conway.player.Ship;
 
 public class SpiralWeapon extends Weapon {
@@ -16,8 +15,8 @@ public class SpiralWeapon extends Weapon {
 	}
 	
 	@Override
-	public ArrayList<Shot> fire(Ship origin) {
-		ArrayList<Shot> ret = new ArrayList<Shot>();
+	public Array<Shot> fire(Ship origin) {
+		Array<Shot> ret = new Array<Shot>();
 		if(timeSinceFire>=rofDelay) {
 			Vector2 mags = vectorComponents(BasicShot.DEFAULT_SPEED,angle);
 			ret.add(new BasicShot(origin.getRect().x+origin.getRect().width/4, origin.getRect().y+origin.getRect().height/4,mags.x,mags.y,origin));

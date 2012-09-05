@@ -1,12 +1,13 @@
 package com.duckcult.conway.gol;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * FastBoard is the main entity that runs all of the Game of Life code.
@@ -88,7 +89,7 @@ public class FastBoard {
 		/**
 		 * A buffer for patterns to load in when bufferMode is set to PATTERN_BUFFER or PATTERN_TO_RANDOM_BUFFER.
 		 */
-		private ArrayList<ArrayList<Boolean>> buffer;	
+		private Array<Array<Boolean>> buffer;	
 		/**
 		 * The current game grid. This is where all external logic will happen.
 		 */
@@ -101,7 +102,7 @@ public class FastBoard {
 		/**
 		 * An ArrayList of Cell objects to hold a copy of objects to optimize multiple calls to toCellObs
 		 */
-		private ArrayList<Cell> cells;
+		private Array<Cell> cells;
 		/**
 		 * A flag for whether toCellObs has been called yet this tick. It is set to false in update()
 		 */
@@ -143,6 +144,8 @@ public class FastBoard {
 		 * The number of seconds the coroutine version of update should wait before committing nextGrid to currGrid if the process finished faster.
 		 */
 		private float secondsPerUpdate = 1.0f;
+		
+		private Texture cellTexture;
 //------------------------------------- end  properties ---------------------------------------------------\\		
 
 //------------------------------------- constructors ------------------------------------------------------\\
@@ -156,8 +159,8 @@ public class FastBoard {
 		 * @param profile 			the rule set the board will follow
 		 * @return A new FastBoard with the specified dimensions populated with all living cells that follow the specified rule set.
 		 */
-		public static FastBoard fullBoard(int height, int width, CellProfile profile) {
-			return new FastBoard(height,width,DEFAULT_FULL,profile,BUFFER_OFF,0.0,0f,null);
+		public static FastBoard fullBoard(int height, int width, int screenWidth, CellProfile profile) {
+			return new FastBoard(height,width,screenWidth,DEFAULT_FULL,profile,BUFFER_OFF,0.0,0f,null);
 		}
 		
 		/**
@@ -169,8 +172,8 @@ public class FastBoard {
 		 * @param buffer 			a pre-loaded buffer pattern.
 		 * @return A new FastBoard with all dead cells and a pre-loaded buffer.
 		 */
-		public static FastBoard bufferedEmptyBoard(int height, int width, ArrayList<ArrayList<Boolean>> buffer) {
-			return new FastBoard(height,width,DEFAULT_EMPTY,CellProfile.NORMAL,PATTERN_BUFFER,DEFAULT_PERCENT_DEAD,0f,buffer);
+		public static FastBoard bufferedEmptyBoard(int height, int width, int screenWidth, Array<Array<Boolean>> buffer) {
+			return new FastBoard(height,width,screenWidth,DEFAULT_EMPTY,CellProfile.NORMAL,PATTERN_BUFFER,DEFAULT_PERCENT_DEAD,0f,buffer);
 		}
 		
 		/**
@@ -182,8 +185,8 @@ public class FastBoard {
 		 * @param width 			the width of the board
 		 * @return a new FastBoard with the given height and width that is populated with all dead NORMAL cells.
 		 */
-		public static FastBoard emptyBoard(int height, int width) {
-			return new FastBoard(height,width,DEFAULT_EMPTY,CellProfile.NORMAL,BUFFER_OFF,1.0,0f,null);
+		public static FastBoard emptyBoard(int height, int width, int screenWidth) {
+			return new FastBoard(height,width,screenWidth,DEFAULT_EMPTY,CellProfile.NORMAL,BUFFER_OFF,1.0,0f,null);
 		}
 		
 		/**
@@ -195,8 +198,8 @@ public class FastBoard {
 		 * @param height 			the height of the board.
 		 * @param width 			the width of the board.
 		 */
-		public FastBoard(int height, int width) {
-			this(height, width, DEFAULT_RANDOM, CellProfile.NORMAL,BUFFER_OFF,DEFAULT_PERCENT_DEAD,0f,null);	
+		public FastBoard(int height, int width, int screenWidth) {
+			this(height, width,screenWidth, DEFAULT_RANDOM, CellProfile.NORMAL,BUFFER_OFF,DEFAULT_PERCENT_DEAD,0f,null);	
 		}
 	
 		/**
@@ -210,8 +213,8 @@ public class FastBoard {
 		 * @param buffer 			the buffer the board will use to add new rows as it advances
 		 * @param movementPerTick 	the distance the board will move, in render space units, with each call to advanceBoard
 		 */
-		public FastBoard(int height, int width, CellProfile profile, ArrayList<ArrayList<Boolean>> buffer,float movementPerTick) {
-			this(height,width,DEFAULT_RANDOM,profile,PATTERN_BUFFER,DEFAULT_PERCENT_DEAD,movementPerTick,buffer);
+		public FastBoard(int height, int width, int screenWidth, CellProfile profile, Array<Array<Boolean>> buffer,float movementPerTick) {
+			this(height,width,screenWidth,DEFAULT_RANDOM,profile,PATTERN_BUFFER,DEFAULT_PERCENT_DEAD,movementPerTick,buffer);
 		}
 		
 		/**
@@ -224,8 +227,8 @@ public class FastBoard {
 		 * @param profile			the rule set the board will follow.
 		 * @param movementPerTick 	the distance the board will move, in render space units, with each call to advanceBoard
 		 */
-		public FastBoard(int height, int width, CellProfile profile, float movementPerTick) {
-			this(height,width,DEFAULT_RANDOM,profile,RANDOM_BUFFER,DEFAULT_PERCENT_DEAD,movementPerTick,null);
+		public FastBoard(int height, int width, int screenWidth, CellProfile profile, float movementPerTick) {
+			this(height,width,screenWidth,DEFAULT_RANDOM,profile,RANDOM_BUFFER,DEFAULT_PERCENT_DEAD,movementPerTick,null);
 		}
 		
 		/**
@@ -241,8 +244,8 @@ public class FastBoard {
 		 * @param percentDead 		the percentage of dead cells to be generated by random row calls
 		 * @param movementPerTick 	the distance the board will move, in render space units, with each call to advanceBoard
 		 */
-		public FastBoard(int height, int width, CellProfile profile,int bufferMode, double percentDead, float movementPerTick) {
-			this(height,width,DEFAULT_RANDOM,profile,bufferMode,percentDead,movementPerTick,null);
+		public FastBoard(int height, int width, int screenWidth, CellProfile profile,int bufferMode, double percentDead, float movementPerTick) {
+			this(height,width,screenWidth,DEFAULT_RANDOM,profile,bufferMode,percentDead,movementPerTick,null);
 		}
 		
 		/**
@@ -257,15 +260,15 @@ public class FastBoard {
 		 * @param movementPerTick	the distance * deltaTime that the board will move with every call to advanceBoard in render space units @see advanceBoard()		
 		 * @param buff				a buffer to use if there is one.
 		 */
-		private FastBoard(int height, int width, int flag, CellProfile profile, int bufferMode, double percentDead, float movementPerTick, ArrayList<ArrayList<Boolean>> buff) {
+		private FastBoard(int height, int width, int screenWidth, int flag, CellProfile profile, int bufferMode, double percentDead, float movementPerTick, Array<Array<Boolean>> buff) {
 			this.rules = profile;
 			this.bufferMode = bufferMode;
 			this.percentDead = percentDead;
 			this.movementPerTick = movementPerTick;
-			squareSize = 2f/width;
+			squareSize = ((float)screenWidth)/((float)width);
 			//bottom -= 2*squareSize;
 			if(buff == null) 
-				buffer = new ArrayList<ArrayList<Boolean>>();
+				buffer = new Array<Array<Boolean>>();
 			else
 				buffer = buff;
 			initBoard(height,width,flag);
@@ -476,6 +479,10 @@ public class FastBoard {
 				y++;
 			}
 		}
+		
+		public void setCellTexture(Texture text) {
+			cellTexture = text;
+		}
 //-------------------------------------- end setters ------------------------------------------------------\\
 		
 		
@@ -484,7 +491,7 @@ public class FastBoard {
 		 * Adds the specified pattern to the current buffer.
 		 * @param pattern	The desired addition to the current buffer.
 		 */
-		public void addBuffer(ArrayList<ArrayList<Boolean>> pattern) {
+		public void addBuffer(Array<Array<Boolean>> pattern) {
 			buffer.addAll(pattern);
 		}
 		
@@ -507,14 +514,14 @@ public class FastBoard {
 				//pattern case	
 				case PATTERN_BUFFER:
 				case PATTERN_TO_RANDOM_BUFFER:
-					if(buffer.size()>0 &&buffer.get(0)!=null) {
+					if(buffer.size>0 &&buffer.get(0)!=null) {
 						bottom -= deltaTime*movementPerTick;
 						if(bottom < (-1-2*squareSize)) {
 							for(int i =0; i<currGrid.length-1;i++) {
 								currGrid[i]=currGrid[i+1];
 								nextGrid[i]=nextGrid[i+1];
 							}
-							ArrayList<Boolean> line= buffer.remove(0);
+							Array<Boolean> line= buffer.removeIndex(0);
 							currGrid[currGrid.length-1] = new boolean[currGrid[0].length];
 							for(int i = 0; i < currGrid[0].length; i++) {
 								currGrid[currGrid.length-1][i] = line.get(i);
@@ -554,7 +561,7 @@ public class FastBoard {
 		public void advanceBoardAlt(float deltaTime) {
 			switch(bufferMode) {
 				case PATTERN_BUFFER:
-					if(buffer == null || buffer.size() >= 0) {
+					if(buffer == null || buffer.size >= 0) {
 						return;
 					}
 				case PATTERN_TO_RANDOM_BUFFER:
@@ -591,7 +598,7 @@ public class FastBoard {
 		 * Replaces the current buffer with a new pattern.
 		 * @param pattern The pattern to replace the current buffer with.
 		 */
-		public void replaceBuffer(ArrayList<ArrayList<Boolean>> pattern) {
+		public void replaceBuffer(Array<Array<Boolean>> pattern) {
 			buffer = pattern;
 		}
 		
@@ -603,8 +610,8 @@ public class FastBoard {
 		 * @param depth 	The desired z-value to render the board at.
 		 * @return	A 1D ArrayList of meshes representing the living cells of the board.
 		 */
-		public ArrayList<Mesh> toMeshesDirect(float depth) {
-			ArrayList<Mesh> ret = new ArrayList<Mesh>(); 
+		public Array<Mesh> toMeshesDirect(float depth) {
+			Array<Mesh> ret = new Array<Mesh>(); 
 			float l = -1;
 			float r = squareSize-1;
 			float b = bottom;
@@ -675,8 +682,8 @@ public class FastBoard {
 		 * @param depth 	The desired z-value to render the board at.
 		 * @return	A 1D ArrayList of meshes representing the living cells of the board.
 		 */
-		public ArrayList<Mesh> toMeshes(float depth) {
-			ArrayList<Mesh> ret = new ArrayList<Mesh>();
+		public Array<Mesh> toMeshes(float depth) {
+			Array<Mesh> ret = new Array<Mesh>();
 			for(Cell c : toCellObs()) {
 				if(c.alive) {
 					Mesh m = new Mesh(true,4,4,
@@ -700,13 +707,13 @@ public class FastBoard {
 		 * grid to just be a collection of Cell objects but I haven't made that change yet.
 		 * @return	A 1D ArrayList of the grid as Cell objects.
 		 */
-		private ArrayList<Cell> toCellObs() {
+		private Array<Cell> toCellObs() {
 			if(!cellObsThisTick) {
-				cells = new ArrayList<Cell>(getArea());
-				float x = -1;
+				cells = new Array<Cell>(getArea());
+				float x = 0;
 				float y = bottom;
 				for(int i = 0; i<currGrid.length; i++) {
-					x = -1;
+					x = 0;
 					for (int j = 0; j < currGrid[i].length; j++) {
 						cells.add(new Cell(j,i,new Rectangle(x,y,squareSize,squareSize),getCell(j,i)));
 						x += squareSize;
@@ -821,7 +828,7 @@ public class FastBoard {
 				currGrid = nextGrid;
 				switch(bufferMode) {
 					case PATTERN_BUFFER:
-						if(buffer == null || buffer.size()<=0) {
+						if(buffer == null || buffer.size<=0) {
 							break;
 						}
 					case PATTERN_TO_RANDOM_BUFFER:
@@ -856,10 +863,10 @@ public class FastBoard {
 		private boolean [] nextRow() {
 			switch(bufferMode) {
 				case PATTERN_BUFFER:
-					if(buffer != null && buffer.size() > 0) {
+					if(buffer != null && buffer.size > 0) {
 						boolean [] ret = new boolean[getWidth()];
-						ArrayList<Boolean> next = buffer.remove(0);
-						for(int i = 0; i < next.size(); i++)
+						Array<Boolean> next = buffer.removeIndex(0);
+						for(int i = 0; i < next.size; i++)
 							ret[i] = next.get(i);
 						return ret;
 					}
@@ -867,12 +874,12 @@ public class FastBoard {
 						return currGrid[currGrid.length-1];
 					}
 				case PATTERN_TO_RANDOM_BUFFER:
-					if(buffer != null && buffer.size() > 0) {
+					if(buffer != null && buffer.size > 0) {
 						boolean [] ret = new boolean[getWidth()];
-						ArrayList<Boolean> next = buffer.remove(0);
-						for(int i = 0; i < next.size(); i++)
+						Array<Boolean> next = buffer.removeIndex(0);
+						for(int i = 0; i < next.size; i++)
 							ret[i] = next.get(i);
-						if(buffer.size() == 0)
+						if(buffer.size == 0)
 							bufferMode = RANDOM_BUFFER;
 						return ret;
 					}
@@ -908,6 +915,16 @@ public class FastBoard {
 			for(int i = 0; i < currGrid.length && (i*squareSize-1 < renderHeight); i++) {
 				currGrid[i] = emptyRow(currGrid[i].length);
 			}
+		}
+		
+		public void draw(SpriteBatch batch) {
+			batch.setColor(rules.liveColor);
+			for(Cell c : cells) {
+				if(c.alive) {
+					batch.draw(cellTexture, c.rect.x, c.rect.y, c.rect.width, c.rect.height);
+				}
+			}
+			batch.setColor(Color.WHITE);
 		}
 //----------------------------------- end major methods ---------------------------------------------------\\
 

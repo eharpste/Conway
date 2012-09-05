@@ -1,26 +1,30 @@
 package com.duckcult.conway;
 
 import com.badlogic.gdx.graphics.Color;
-import java.util.ArrayList;
+import com.badlogic.gdx.graphics.Texture;
+
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.duckcult.conway.gol.FastBoard;
 import com.duckcult.conway.player.KeyBindings;
 import com.duckcult.conway.player.Ship;
+import com.duckcult.conway.weapons.BasicShot;
 import com.duckcult.conway.weapons.Shot;
 
 public class World2P {
 	private static final Color [] playerColors = {Color.RED, Color.BLUE, new Color(1,1,0,1), new Color (1,0,1,1), new Color(0,1,1,1)};
 	private static final KeyBindings [] bindings = {KeyBindings.WASD_QE_LSHIFT, KeyBindings.IJKL_UO_SLASH};
 	private FastBoard board;
-	private ArrayList<Shot> shots;
-	private ArrayList<Ship> players;
+	private Array<Shot> shots;
+	private Array<Ship> players;
 	private Ship player1;
-	private Ship player2;
+	//private Ship player2;
 	
 	private float respawnDelay = 1.5f;
 	private float timeSinceRespawn = 0.0f;
@@ -32,10 +36,14 @@ public class World2P {
 	 */
 	public World2P (FastBoard board) {
 		this.board = board;
+		Texture defaultText = new Texture(Gdx.files.internal("assets/88White.png"));
+		board.setCellTexture(defaultText);
+		Ship.setGlobalTexture(defaultText);
+		BasicShot.setGlobalTexture(defaultText);
 		spawn2Players();
 		//players.add(spawnPlayer(1,Color.RED));
 		//players.add(spawnPlayer(2,Color.BLUE));
-		shots = new ArrayList<Shot>();
+		shots = new Array<Shot>(false, 1000);
 	}
 	
 	/**
@@ -58,33 +66,37 @@ public class World2P {
 		board.advanceBoard(deltaTime);
 		if(player1.isAlive() && board.getOverlappedCell(player1.getRect()).alive)
 			player1.kill();
-		if(player2.isAlive() && board.getOverlappedCell(player2.getRect()).alive)
-			player2.kill();
+	/*	if(player2.isAlive() && board.getOverlappedCell(player2.getRect()).alive)
+			player2.kill();*/
 		player1.update(deltaTime, shots);
-		player2.update(deltaTime, shots);
+		/*player2.update(deltaTime, shots);
 		if(player1.checkCrash(player2)) {
 			player1.kill();
 			player2.kill();
-		}
+		}*/
+		/*if(player1.isAlive() && board.getOverlappedCell(player1.getRect()).alive)
+			player1.kill();
+		player1.update(deltaTime,shots);
+		*/
 		/*for(Ship p : players) {
 			if(p.isAlive() && board.getOverlappedCell(p.getRect()).alive)
 				p.kill();
-			p.update(deltaTime, shots);
-			for(Ship p2: players) {
+			p.update(deltaTime, shots);*/
+			/*for(Ship p2: players) {
 				if(p.getRect().overlaps(p2.getRect())) {
 					p.kill();
 					p2.kill();
 				}
-			}
-		}*/
-		Rectangle checkRect = new Rectangle(-1.1f,-1.1f,2.1f,2.1f);
-		for(int i = 0; i<shots.size(); i++) {
+			}*/
+		//}
+		Rectangle checkRect = new Rectangle(0,0,Conway.screenWidth,Conway.screenHeight);
+		for(int i = 0; i<shots.size; i++) {
 			if(!checkRect.contains(shots.get(i).getRect()))
-				shots.remove(i);
+				shots.removeIndex(i);
 			else {
 				shots.get(i).update(deltaTime);
-				if(shots.get(i).hit(board) || shots.get(i).hit(player1) || shots.get(i).hit(player2))
-					shots.remove(i);
+				if(shots.get(i).hit(board) || shots.get(i).hit(player1) /*|| shots.get(i).hit(player2)*/)
+					shots.removeIndex(i);
 			}
 		}
 		if(timeSinceRespawn < respawnDelay)
@@ -95,10 +107,10 @@ public class World2P {
 					reSpawnPlayer(player1);
 					timeSinceRespawn = 0.0f;
 				}
-				if(!player2.isAlive() && timeSinceRespawn >= respawnDelay) {
+				/*if(!player2.isAlive() && timeSinceRespawn >= respawnDelay) {
 					reSpawnPlayer(player2);
 					timeSinceRespawn = 0.0f;
-				}
+				}*/
 			}
 		}
 	}
@@ -108,23 +120,32 @@ public class World2P {
 		board.makeSafeZone(oldShip.getRect().y+oldShip.getRect().getHeight()+.3f);
 	}
 	
-	public ArrayList<Mesh> toMeshes(float depth) {
-		ArrayList<Mesh> ret = board.toMeshes(depth);
+	public Array<Mesh> toMeshes(float depth) {
+		Array<Mesh> ret = board.toMeshes(depth);
 		ret.addAll(player1.toMeshes(depth));
-		ret.addAll(player2.toMeshes(depth));
+	//	ret.addAll(player2.toMeshes(depth));
 		for(Shot w : shots) {
 			ret.add(w.toMesh(depth));
 		}
 		return ret;
 	}
 	
+	public void draw(SpriteBatch batch) {
+		board.draw(batch);
+		for(Shot s : shots) {
+			s.draw(batch);
+		}
+		player1.draw(batch);
+	//	player2.draw(batch);
+	}
+	
 	private void spawn2Players() {
 		//ArrayList<Ship> ret = new ArrayList<Ship>(2);
-		player1 = new Ship(board.getSquareSize()*.7f,1,playerColors[0],KeyBindings.WASD_QE_V);
-		player2 = new Ship(board.getSquareSize()*.7f,2,playerColors[1],KeyBindings.OKLSEMICOLON_IP_N);
-		player1.alterPosition(-.5f, 0);
-		player2.alterPosition(.5f,0);
-		board.makeSafeZone(player1.getRect().y+player1.getRect().getHeight()+.3f);
+		player1 = new Ship(board.getSquareSize()*.7f,1,playerColors[0],KeyBindings.WASD_QE_SPACE);
+		//player2 = new Ship(board.getSquareSize()*.7f,2,playerColors[1],KeyBindings.OKLSEMICOLON_IP_N);
+		//player1.alterPosition(-.5f, 0);
+		//player2.alterPosition(.5f,0);
+		board.makeSafeZone(player1.getRect().y+player1.getRect().getHeight()+50);
 		//return ret;
 	}
 	
@@ -132,7 +153,7 @@ public class World2P {
 	
 	//public Ship getShip() {return player;}
 	
-	public ArrayList<Ship> getPlayers() {return players;}
+	public Array<Ship> getPlayers() {return players;}
 	
-	public ArrayList<Shot> getShots() {return shots;}
+	public Array<Shot> getShots() {return shots;}
 }
