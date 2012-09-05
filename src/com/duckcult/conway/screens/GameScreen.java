@@ -1,7 +1,7 @@
 package com.duckcult.conway.screens;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.duckcult.conway.World2P;
+import com.duckcult.conway.World;
 
 public class GameScreen extends ConwayScreen {
 	static final int GAME_READY = 0;
@@ -10,6 +10,6 @@ public class GameScreen extends ConwayScreen {
 	static final int GAME_LEVEL_END = 3;
 	static final int GAME_OVER = 4;
 	
-	private World2P world;
+	private World world;
 	private OrthographicCamera guiCam;
 }

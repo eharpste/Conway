@@ -23,7 +23,7 @@ public class Conway extends Game {
 	private Camera camera;
 	//private Mesh nearSquare; 
 	
-	private World2P world;
+	private World world;
 	
 	public static int screenWidth = 800;
 	public static int screenHeight = 480;
@@ -31,7 +31,7 @@ public class Conway extends Game {
 	
 	@Override
 	public void create() {
-		world = new World2P(new FastBoard(25,21,screenWidth,CellProfile.NORMAL,boardScrollSpeed));
+		world = new World(new FastBoard(25,21,screenWidth,CellProfile.NORMAL,boardScrollSpeed));
 		batch = new SpriteBatch();
 		camera = new OrthographicCamera();
 		((OrthographicCamera) camera).setToOrtho(false,screenWidth,screenHeight);
