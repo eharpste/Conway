@@ -24,15 +24,15 @@ import com.badlogic.gdx.utils.Array;
  * 
  * Most processing should be done on currGrid not nextGrid. Next grid is for the update method to use.
  * 
- * currGrid[0][0] is the BOTTOM LEFT element on screen currGrid[length][0] is the BOTTOM RIGHT, currGrid[0][length] is the UPPER LEFT 
- * 	and currGrid[length][length] is the UPPER RIGHT
+ * currGrid[0][0] is the BOTTOM LEFT element on screen 
+ * currGrid[length][0] is the BOTTOM RIGHT
+ * currGrid[0][length] is the UPPER LEFT 
+ * currGrid[length][length] is the UPPER RIGHT
  * 
- * Throughout the documentation I make reference to 3 different spaces: board space, render space, and screen space.
+ * All this stuf
+ * Throughout the documentation I make reference to 2 different spaces: board space, and screen space.
  * Board space is the literal currGrid[y][x].
- * Render space is defined by OpenGL defining the center of the screen as (0,0) and going from -1 to 1 for the extends of the screen.
- * 	the values of bottom, and movementPerTick are in render space units
- * Screen space is defined by LibGDX to handle mouse and touch input and corresponds to the number of pixels from the top left of the screen.
- * 	no parameters current use this but I am working on a mapping function.
+ * Screen space is a pixel count from the lower left position on the screen.
  * I am co-opting the "@deprecated" tag for methods I'm still experimenting with.
  * @author eharpste
  *

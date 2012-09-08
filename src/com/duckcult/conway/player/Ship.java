@@ -2,7 +2,6 @@ package com.duckcult.conway.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
@@ -23,6 +22,8 @@ import com.duckcult.conway.weapons.Weapon;
 
 public class Ship {
 	private static Texture texture;
+	private static int numShips = 0;
+	public static Array<Ship> ships = new Array<Ship>(true,2);
 
 	public static void setGlobalTexture (Texture text) {
 		texture = text;
@@ -82,7 +83,7 @@ public class Ship {
 	/**
 	 * The travel speed of the dead ship's shards.
 	 */
-	private float shardSpeed = .075f;
+	private float shardSpeed = 20;
 	/**
 	 * The time delay between when the player is allowed to switch weapons.
 	 * This isn't meant to be a balance hindrance its mainly to prevent the change weapon button from being spammed by the render loop.
@@ -92,6 +93,8 @@ public class Ship {
 	 * The time since the player last switch weapons.
 	 */
 	private float timeSinceWeaponSwitch = 0.0f;
+	
+	private int score = 0;
 	
 	/**
 	 * Creates the standard single player ship with the given size.
@@ -103,7 +106,7 @@ public class Ship {
 		xv = 50f;
 		yv = 50f;
 		color = Color.RED;
-		playerNumber = 1;
+		playerNumber = numShips++;
 		keyBindings = KeyBindings.WASD_QE_SPACE;
 		weapons = new Weapon [6];
 		weapons[0]= new StandardWeapon();
@@ -112,7 +115,12 @@ public class Ship {
 		weapons[3]= new QuadShotWeapon();
 		weapons[4]= new BeamWeapon();
 		weapons[5]= new SpiralWeapon();
-		
+		deathRects = new Rectangle[4];
+		deathRects[0] = new Rectangle(0,0,size/2,size/2);
+		deathRects[1] = new Rectangle(0,0,size/2,size/2);
+		deathRects[2] = new Rectangle(0,0,size/2,size/2);
+		deathRects[3] = new Rectangle(0,0,size/2,size/2);
+		ships.add(this);
 	}
 	
 	/**
@@ -123,11 +131,12 @@ public class Ship {
 	 * @param playerColor	The player's color.
 	 * @param keyBindings	The keyBindings that the player will use.
 	 */
-	public Ship(float size, int playerNumber, Color playerColor, KeyBindings keyBindings){
+	public Ship(float size, Color playerColor, KeyBindings keyBindings){
 		this(size);
 		color = playerColor;
-		this.playerNumber = playerNumber;
 		this.keyBindings = keyBindings;
+		
+										
 	}
 	
 	/**
@@ -236,11 +245,14 @@ public class Ship {
 		if(!alive)
 			return;
 		alive = false;
-		deathRects = new Rectangle[4];
-		deathRects[0] = new Rectangle(rect.x,rect.y,rect.width/2f,rect.height/2f);
-		deathRects[1] = new Rectangle(rect.x+rect.width/2f, rect.y, rect.width/2f, rect.height/2f);
-		deathRects[2] = new Rectangle(rect.x, rect.y+rect.height/2f,rect.width/2f,rect.height/2f);
-		deathRects[3] = new Rectangle(rect.x+rect.width/2f,rect.y+rect.height/2f,rect.width/2f,rect.height/2f);
+		deathRects[0].x = rect.x;
+		deathRects[0].y = rect.y;
+		deathRects[1].x = rect.x + rect.width / 2f;
+		deathRects[1].y = rect.y;
+		deathRects[2].x = rect.x;
+		deathRects[2].y = rect.y + rect.height / 2f;
+		deathRects[3].x = rect.x + rect.width / 2f;
+		deathRects[3].y = rect.y + rect.height / 2f;
 		timeSinceDeath = 0.0f;
 	}
 	
@@ -250,8 +262,8 @@ public class Ship {
 	 */
 	public void respawn(Vector2 position) {
 		this.respawn();
-		rect.x=position.x;
-		rect.y=position.y;
+		/*rect.x=position.x;
+		rect.y=position.y;*/
 	}
 	
 	/**
@@ -259,8 +271,10 @@ public class Ship {
 	 * Sets alive to true, timeSinceWeaponSwitch to 0 and weaponMode to 0.
 	 */
 	public void respawn() {
+		rect.x=Conway.screenWidth/2-rect.width/2;
+		rect.y=rect.width*4;	
 		alive = true;
-		deathRects = null;
+		//deathRects = null;
 		timeSinceWeaponSwitch = 0.0f;
 		weaponMode = 0;
 	}
@@ -350,5 +364,24 @@ public class Ship {
 			batch.draw(texture, rect.x, rect.y,rect.width,rect.height);
 			batch.setColor(Color.WHITE);
 		}
+		else if(timeSinceDeath < deathAnimationTime) {
+			batch.setColor(color);
+			for(Rectangle r : deathRects) {
+				batch.draw(texture, r.x, r.y, r.width, r.height);
+			}
+			batch.setColor(Color.WHITE);
+		}
+	}
+	
+	public void setScore(int score) {
+		this.score=score;
+	}
+	
+	public void addScore(int score) {
+		this.score+=score;
+	}
+	
+	public int getScore() {
+		return this.score;
 	}
 }

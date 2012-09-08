@@ -24,6 +24,8 @@ public abstract class Weapon {
 	 */
 	protected float timeSinceFire;
 	
+	protected int ammo = 0;
+	
 	/**
 	 * Where all the magic happens in weapons.
 	 * This should return some collection of shots that represent what happens when the weapon is fired once.
@@ -56,12 +58,16 @@ public abstract class Weapon {
 			timeSinceFire+=deltaTime;
 	}
 	
+	public boolean hasAmmo() {
+		return ammo>0;
+	}
+	
 	/**
 	 * Returns the x or y magnitude for a shot moving diagonally with the given speed.
 	 * @param speed
 	 * @return
 	 */
-	protected float getDiagonal(float speed) {
+	protected static float getDiagonal(float speed) {
 		return speed*MathUtils.cosDeg(45);
 	}
 	
@@ -72,7 +78,7 @@ public abstract class Weapon {
 	 * @param degreesAngle
 	 * @return
 	 */
-	protected Vector2 vectorComponents(float magnitude, float degreesAngle) {
+	protected static Vector2 vectorComponents(float magnitude, float degreesAngle) {
 		return new Vector2(magnitude*MathUtils.cosDeg(degreesAngle), magnitude*MathUtils.sinDeg(degreesAngle));
 	}
 }
