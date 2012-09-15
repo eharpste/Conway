@@ -62,6 +62,18 @@ public abstract class Weapon {
 		return ammo>0;
 	}
 	
+	public void setAmmo(int shots){
+		ammo = shots;
+	}
+	
+	public int getAmmo() {
+		return ammo;
+	}
+	
+	public void addAmmo(int shots) {
+		ammo += shots;
+	}
+	
 	/**
 	 * Returns the x or y magnitude for a shot moving diagonally with the given speed.
 	 * @param speed

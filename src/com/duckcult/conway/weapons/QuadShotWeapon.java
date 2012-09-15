@@ -15,7 +15,7 @@ public class QuadShotWeapon extends Weapon {
 	@Override
 	public Array<Shot> fire(Ship origin) {
 		Array<Shot> ret = new Array<Shot>();
-		if(timeSinceFire>=rofDelay) {
+		if(timeSinceFire>=rofDelay && hasAmmo()) {
 			if(straight){
 				//up
 				ret.add(new BasicShot(origin));
@@ -40,6 +40,7 @@ public class QuadShotWeapon extends Weapon {
 				straight = true;
 			}
 			timeSinceFire = 0.0f;
+			ammo--;
 		}
 		return ret;
 	}

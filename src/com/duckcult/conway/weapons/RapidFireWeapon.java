@@ -15,7 +15,7 @@ public class RapidFireWeapon extends Weapon {
 	@Override
 	public Array<Shot> fire(Ship origin) {
 		Array<Shot> ret = new Array<Shot>();
-		if(timeSinceFire>=rofDelay) {
+		if(timeSinceFire>=rofDelay && hasAmmo()) {
 			if(one){
 				ret.add(new BasicShot(origin.getRect().x,origin.getRect().y+origin.getRect().height,0,BasicShot.DEFAULT_FAST,origin));
 				one = false;
@@ -25,6 +25,7 @@ public class RapidFireWeapon extends Weapon {
 				one = true;
 			}
 			timeSinceFire = 0.0f;
+			ammo--;
 		}
 		return ret;
 	}

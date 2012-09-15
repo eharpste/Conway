@@ -5,9 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.duckcult.conway.gol.CellProfile;
 import com.duckcult.conway.gol.FastBoard;
+import com.duckcult.conway.player.Ship;
 import com.duckcult.conway.screens.ConwayScreen;
 
 /**
@@ -25,14 +27,21 @@ public class Conway extends Game {
 	
 	private World world;
 	
+	private BitmapFont font;
+	private float textHeight;
+	private float textWidth;
+	
 	public static int screenWidth = 800;
-	public static int screenHeight = 480;
+	public static int screenHeight = 600;
 	public static float boardScrollSpeed = 25;
 	
 	@Override
 	public void create() {
 		world = new World(new FastBoard(25,21,screenWidth,CellProfile.NORMAL,boardScrollSpeed));
 		batch = new SpriteBatch();
+		font = new BitmapFont();
+		textWidth = font.getBounds("0000").width;
+		textHeight = font.getBounds("0000").height;
 		camera = new OrthographicCamera();
 		((OrthographicCamera) camera).setToOrtho(false,screenWidth,screenHeight);
 	}
@@ -58,6 +67,7 @@ public class Conway extends Game {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 		world.draw(batch);
+		font.draw(batch, formatScore(Ship.ships.get(0).getScore()), 0, screenHeight-textHeight);
 		batch.end();
 		/*for(Mesh m : world.toMeshes(-1)) {
 			m.render(GL10.GL_TRIANGLE_STRIP,0,4);
@@ -81,4 +91,18 @@ public class Conway extends Game {
 	public ConwayScreen getScreen() {
 		return (ConwayScreen)super.getScreen();
 	}
+	
+	public String formatScore(int score) {
+		if(score==0)
+			return "0000";
+		else if(score<10)
+			return "000"+score;
+		else if(score < 100)
+			return "00"+score;
+		else if(score < 1000)
+			return score+"";
+		else
+			return "9999";
+	}
+
 }

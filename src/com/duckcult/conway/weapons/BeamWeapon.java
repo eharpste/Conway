@@ -9,7 +9,7 @@ public class BeamWeapon extends Weapon {
 	private float beamTime = 2.5f;
 	
 	public BeamWeapon(){
-		name = "Tripple";
+		name = "Beam";
 		rofDelay=3f;
 		timeSinceFire = rofDelay;
 	}
@@ -17,8 +17,9 @@ public class BeamWeapon extends Weapon {
 	@Override
 	public Array<Shot> fire(Ship origin) {
 		Array<Shot> ret = new Array<Shot>();
-		if(!firing && timeSinceFire >= rofDelay) {
+		if(!firing && timeSinceFire >= rofDelay && hasAmmo()) {
 			firing = true;
+			ammo--;
 			timeSinceFire=0.0f;
 		}
 		if(firing) {

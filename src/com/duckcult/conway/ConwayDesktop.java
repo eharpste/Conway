@@ -8,7 +8,7 @@ public class ConwayDesktop {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new JoglApplication(new Conway(), "Conway", 800, 600, false);
+		new JoglApplication(new Conway(), "Conway", Conway.screenWidth, Conway.screenHeight, false);
 	}
 
 }

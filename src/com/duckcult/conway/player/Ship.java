@@ -94,7 +94,7 @@ public class Ship {
 	 */
 	private float timeSinceWeaponSwitch = 0.0f;
 	
-	private int score = 0;
+	public int score = 0;
 	
 	/**
 	 * Creates the standard single player ship with the given size.
@@ -155,12 +155,12 @@ public class Ship {
 			}
 			if(timeSinceWeaponSwitch <= weaponModeSwitchTime) 
 				timeSinceWeaponSwitch +=deltaTime;
-			if(weaponMode > 0 && Gdx.input.isKeyPressed(keyBindings.prevWeapon()) && timeSinceWeaponSwitch > weaponModeSwitchTime) {
-				weaponMode--;
+			if(Gdx.input.isKeyPressed(keyBindings.prevWeapon()) && timeSinceWeaponSwitch > weaponModeSwitchTime) {
+				prevWeapon();
 				timeSinceWeaponSwitch = 0.0f;
 			}
-			if(weaponMode < weapons.length-1 && Gdx.input.isKeyPressed(keyBindings.nextWeapon()) && timeSinceWeaponSwitch > weaponModeSwitchTime) {
-				weaponMode++;
+			if(Gdx.input.isKeyPressed(keyBindings.nextWeapon()) && timeSinceWeaponSwitch > weaponModeSwitchTime) {
+				nextWeapon();
 				timeSinceWeaponSwitch = 0.0f;
 			}
 			if(Gdx.input.isKeyPressed(keyBindings.up())  && rect.y < Conway.screenHeight) {
@@ -178,8 +178,10 @@ public class Ship {
 			if(Gdx.input.isKeyPressed(keyBindings.fire())) {
 				fire(shots);
 			}
+			if(!weapons[weaponMode].hasAmmo())
+				prevWeapon();
 		}
-		else {
+		else if(timeSinceDeath < deathAnimationTime) {
 			timeSinceDeath += deltaTime;
 			//0 is lower left
 			deathRects[0].x-=deltaTime*shardSpeed;
@@ -194,6 +196,25 @@ public class Ship {
 			deathRects[3].x+=deltaTime*shardSpeed;
 			deathRects[3].y+=deltaTime*shardSpeed;
  		}
+	}
+	
+	private void nextWeapon() {
+		weaponMode++;
+		while(!weapons[weaponMode].hasAmmo()) {
+			weaponMode++;
+			if(weaponMode == weapons.length)
+				weaponMode = 0;
+		}
+	}
+	
+	private void prevWeapon() {
+		if(weaponMode==0)
+			weaponMode = weapons.length-1;
+		else
+			weaponMode--;
+		while(!weapons[weaponMode].hasAmmo()) {
+			weaponMode--;
+		}
 	}
 	
 	/**

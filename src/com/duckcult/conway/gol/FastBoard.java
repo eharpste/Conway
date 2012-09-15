@@ -516,7 +516,7 @@ public class FastBoard {
 				case PATTERN_TO_RANDOM_BUFFER:
 					if(buffer.size>0 &&buffer.get(0)!=null) {
 						bottom -= deltaTime*movementPerTick;
-						if(bottom < (-1-2*squareSize)) {
+						if(bottom < (-2*squareSize)) {
 							for(int i =0; i<currGrid.length-1;i++) {
 								currGrid[i]=currGrid[i+1];
 								nextGrid[i]=nextGrid[i+1];
@@ -537,7 +537,7 @@ public class FastBoard {
 				//random case
 				case RANDOM_BUFFER:
 					bottom -= deltaTime*movementPerTick;
-					if(bottom < (-1-2*squareSize)) {
+					if(bottom < (-2*squareSize)) {
 						for(int i =0; i<currGrid.length-1;i++) {
 							currGrid[i]=currGrid[i+1];
 							nextGrid[i]=nextGrid[i+1];
@@ -844,7 +844,7 @@ public class FastBoard {
 		}
 		
 		/**
-		 * Kills the cell that is overlapped by the given Rectangle in render space and returns true if it succeeded.
+		 * Kills the cell that is overlapped by the given Rectangle in screen space and returns true if it succeeded.
 		 * If the Rectangle does not overlap a living cell or doesn't overlap any cell it will return false;
 		 * @param rect	A Rectangle that describes something in render space.
 		 * @return	true if the kill was successful, false if the cell is already dead or the the rectangle is outside the board.
@@ -919,7 +919,7 @@ public class FastBoard {
 		
 		public void draw(SpriteBatch batch) {
 			batch.setColor(rules.liveColor);
-			for(Cell c : cells) {
+			for(Cell c : toCellObs()) {
 				if(c.alive) {
 					batch.draw(cellTexture, c.rect.x, c.rect.y, c.rect.width, c.rect.height);
 				}

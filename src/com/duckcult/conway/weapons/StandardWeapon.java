@@ -20,4 +20,12 @@ public class StandardWeapon extends Weapon {
 		}
 		return ret;
 	}
+	
+	public boolean hasAmmo() {
+		return true;
+	}
+	
+	public int getAmmo() {
+		return Integer.MAX_VALUE;
+	}
 }

@@ -41,7 +41,7 @@ public class World {
 		spawn2Players();
 		//players.add(spawnPlayer(1,Color.RED));
 		//players.add(spawnPlayer(2,Color.BLUE));
-		shots = new Array<Shot>(false, 10);
+		shots = new Array<Shot>(false,0);
 	}
 	
 	/**

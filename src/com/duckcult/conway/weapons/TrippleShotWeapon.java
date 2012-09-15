@@ -13,12 +13,13 @@ public class TrippleShotWeapon extends Weapon {
 	@Override
 	public Array<Shot> fire(Ship origin) {
 		Array<Shot> ret = new Array<Shot>();
-		if(timeSinceFire>=rofDelay) {
+		if(timeSinceFire>=rofDelay && hasAmmo()) {
 			float mag = getDiagonal(BasicShot.DEFAULT_SPEED);
 			ret.add(new BasicShot(origin));
 			ret.add(new BasicShot(mag,mag,origin));
 			ret.add(new BasicShot(-mag,mag,origin));
 			timeSinceFire = 0.0f;
+			ammo--;
 		}
 		return ret;
 	}
