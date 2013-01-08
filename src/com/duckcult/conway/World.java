@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.duckcult.conway.gol.FastBoard;
+import com.duckcult.conway.gol.NeoBoard;
 import com.duckcult.conway.player.KeyBindings;
 import com.duckcult.conway.player.Ship;
 import com.duckcult.conway.weapons.BasicShot;
@@ -17,7 +18,8 @@ import com.duckcult.conway.weapons.Shot;
 public class World {
 	private static final Color [] playerColors = {Color.RED, Color.BLUE, new Color(1,1,0,1), new Color (1,0,1,1), new Color(0,1,1,1)};
 	//private static final KeyBindings [] bindings = {KeyBindings.WASD_QE_LSHIFT, KeyBindings.IJKL_UO_SLASH};
-	private FastBoard board;
+//	private FastBoard board;
+	private NeoBoard board;
 	private Array<Shot> shots;
 	private Array<Ship> players;
 	private Ship player1;
@@ -32,7 +34,7 @@ public class World {
 	 * The player ship will be set to be 70% the size of the Board's squareSize.
 	 * @param board
 	 */
-	public World (FastBoard board) {
+	public World (NeoBoard board) {
 		this.board = board;
 		Texture defaultText = new Texture(Gdx.files.internal("assets/88White.png"));
 		board.setCellTexture(defaultText);
@@ -124,7 +126,7 @@ public class World {
 		board.makeSafeZone(player1.getRect().y+player1.getRect().getHeight()+50);
 	}
 	
-	public Array<Mesh> toMeshes(float depth) {
+	/*public Array<Mesh> toMeshes(float depth) {
 		Array<Mesh> ret = board.toMeshes(depth);
 		ret.addAll(player1.toMeshes(depth));
 	//	ret.addAll(player2.toMeshes(depth));
@@ -132,7 +134,7 @@ public class World {
 			ret.add(w.toMesh(depth));
 		}
 		return ret;
-	}
+	}*/
 	
 	public void draw(SpriteBatch batch) {
 		board.draw(batch);
@@ -149,11 +151,11 @@ public class World {
 		//player2 = new Ship(board.getSquareSize()*.7f,2,playerColors[1],KeyBindings.OKLSEMICOLON_IP_N);
 		//player1.alterPosition(-.5f, 0);
 		//player2.alterPosition(.5f,0);
-		board.makeSafeZone(player1.getRect().y+player1.getRect().getHeight()+50);
+		board.makeSafeZone(Conway.screenHeight/4);
 		//return ret;
 	}
 	
-	public FastBoard getBoard() {return board;}
+	public NeoBoard getBoard() {return board;}
 	
 	//public Ship getShip() {return player;}
 	

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.duckcult.conway.gol.FastBoard;
+import com.duckcult.conway.gol.NeoBoard;
 import com.duckcult.conway.player.Ship;
 import com.duckcult.conway.utils.ColorUtils;
 
@@ -52,6 +53,8 @@ public abstract class Shot {
 	 * @return true is the World should remove the shot after running the hit (usually meaning it hit something), false otherwise.
 	 */
 	public abstract boolean hit(FastBoard board);
+	
+	public abstract boolean hit(NeoBoard board);
 	/**
 	 * Runs to see if the shot hit the ship, process the effect of the hit, and returns true if the hit is successful.
 	 * Returning true from this method is a signal to the world to remove the shot. In general this means that the shot

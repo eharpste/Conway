@@ -163,7 +163,7 @@ public class Ship {
 				nextWeapon();
 				timeSinceWeaponSwitch = 0.0f;
 			}
-			if(Gdx.input.isKeyPressed(keyBindings.up())  && rect.y < Conway.screenHeight) {
+			if(Gdx.input.isKeyPressed(keyBindings.up())  && (rect.y+rect.height) < Conway.screenHeight) {
 				rect.y += deltaTime * yv;
 			}
 			if(Gdx.input.isKeyPressed(keyBindings.left()) && rect.x > 0){
@@ -172,7 +172,7 @@ public class Ship {
 			if(Gdx.input.isKeyPressed(keyBindings.down()) && rect.y > 0){
 				rect.y -= deltaTime * yv;
 			}
-			if(Gdx.input.isKeyPressed(keyBindings.right()) && rect.x < Conway.screenWidth) {
+			if(Gdx.input.isKeyPressed(keyBindings.right()) && (rect.x+rect.width) < Conway.screenWidth) {
 				rect.x += deltaTime * xv;
 			}
 			if(Gdx.input.isKeyPressed(keyBindings.fire())) {

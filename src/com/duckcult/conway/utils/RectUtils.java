@@ -90,4 +90,12 @@ public class RectUtils {
 		float scaledY = origin.y-scaledHeight/2f+origin.height/2f;
 		return new Rectangle(scaledX,scaledY,scaledWidth,scaledHeight);
 	}
+	
+	public static float globalMaxX(Rectangle rect) {
+		return rect.x + rect.width;
+	}
+	
+	public static float globalMaxY(Rectangle rect) {
+		return rect.y + rect.height;
+	}
 }

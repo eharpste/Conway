@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.duckcult.conway.gol.FastBoard;
+import com.duckcult.conway.gol.NeoBoard;
 import com.duckcult.conway.player.Ship;
 
 public class BasicShot extends Shot {
@@ -130,5 +131,10 @@ public class BasicShot extends Shot {
 		batch.setColor(color);
 		batch.draw(texture, rect.x, rect.y,rect.width,rect.height);
 		batch.setColor(Color.WHITE);
+	}
+
+	@Override
+	public boolean hit(NeoBoard board) {
+		return board.killOverlappedCell(rect);
 	}
 }

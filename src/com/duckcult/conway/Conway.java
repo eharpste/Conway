@@ -7,8 +7,11 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.duckcult.conway.gol.CellProfile;
 import com.duckcult.conway.gol.FastBoard;
+import com.duckcult.conway.gol.NeoBoard;
 import com.duckcult.conway.player.Ship;
 import com.duckcult.conway.screens.ConwayScreen;
 
@@ -37,7 +40,9 @@ public class Conway extends Game {
 	
 	@Override
 	public void create() {
-		world = new World(new FastBoard(25,21,screenWidth,CellProfile.NORMAL,boardScrollSpeed));
+		
+		
+		world = new World(new NeoBoard(25,21,new Rectangle(0,0,(float)screenWidth,(float)screenHeight),new Vector2(0,boardScrollSpeed),null,CellProfile.NORMAL,.5,true));
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		textWidth = font.getBounds("0000").width;
@@ -57,7 +62,7 @@ public class Conway extends Game {
 	@Override
 	public void render() {
 		if(Gdx.input.isTouched()) {
-			world.getBoard().checkScreenSpace(Gdx.input.getX(),Gdx.input.getY(),screenWidth,screenHeight);
+			world.getBoard().flipCell(Gdx.input.getX(),Gdx.input.getY());
 		}
 		world.update(Gdx.graphics.getDeltaTime());
 
