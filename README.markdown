@@ -1,7 +1,11 @@
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
+This is some very old code from before my time in grad school. I see no reason to take it down but definitely plan to never really touch it again.
+
 Macdev branch is a branch for exploring current issues with the mac development of the build.
 
 
-Potential Warning to Mac users. Earlier in the games development there was some performance issue where the game caused Macs to hang until the process was killed. A lot has changed in the code since so I'm not sure if that will still happen but if it does please let me (naxareth) know.
+Potential Warning to Mac users. Earlier in the games development there was some performance issue where the game caused Macs to hang until the process was killed. A lot has changed in the code since so I'm not sure if that will still happen but if it does please let me know.
 
 This project uses the libgdx library found here: http://code.google.com/p/libgdx/
 Documentation for libgdx can be found here: http://libgdx.badlogicgames.com/nightlies/docs/api/
